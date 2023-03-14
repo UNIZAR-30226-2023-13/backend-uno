@@ -27,6 +27,6 @@ export class Tablero {
     robarCarta(jugador: Jugador): void{
         // Ejemplo
         const cartaRobada = this.mazoCentral.pop()
-        cartaRobada ? jugador.mano.push(cartaRobada) : console.log("error") 
+        cartaRobada ? jugador.mano.push(cartaRobada) : console.error("No habia más cartas para robar") 
     }
 }
