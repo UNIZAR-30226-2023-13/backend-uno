@@ -4,6 +4,7 @@ import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
 import cookieSession from "cookie-session";
 const loginRoute = require('./routes/login.route')
+const auth = require('./middlewares/auth')
 
 dotenv.config();
 
@@ -21,9 +22,9 @@ app.use(cookieParser());
 app.use(bodyParser.urlencoded({extended:true}));
 app.use(cookieSession({ keys: ["mykey"] }));
 
-app.use('/login',loginRoute)
+app.use('/login',loginRoute);
 
-app.get('/', (req: Request, res: Response) => {
+app.get('/',auth,(req: Request, res: Response) => {
   res.send('Express + TypeScript Server (is running)');
 });
 
