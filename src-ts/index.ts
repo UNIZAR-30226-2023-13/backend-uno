@@ -22,11 +22,24 @@ app.use(cookieParser());
 app.use(bodyParser.urlencoded({extended:true}));
 app.use(cookieSession({ keys: ["mykey"] }));
 
+
+declare module 'express-session' {
+  interface SessionData {
+    username: string;
+    loggeado: boolean;
+  }
+}
+
+app.use(cookieParser());
+app.use(bodyParser.urlencoded({extended:true}));
+app.use(cookieSession({ keys: ["mykey"] }));
+
 app.use('/login',loginRoute);
 
 app.get('/',auth,(req: Request, res: Response) => {
   res.send('Express + TypeScript Server (is running)');
 });
+
 
 
 app.listen(port, () => {
