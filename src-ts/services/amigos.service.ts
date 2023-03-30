@@ -33,3 +33,16 @@ export function getAmigos(username:String): Persona[]{
     return [];
 }
 
+export function anadirAmigos(username1:String, username2:String): Boolean{
+    // Definir query (algo parecido a esto)
+    const queryString: string = `
+        INSERT INTO amigo(amigo1,amigo2) 
+        VALUES (?,?)
+        `
+        
+    db.query(queryString, [username1, username2], (err: MysqlError | null, result: any) => {
+        return err;
+    });
+    
+    return false;
+}
