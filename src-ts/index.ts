@@ -3,12 +3,12 @@ import dotenv from 'dotenv';
 import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
 import cookieSession from "cookie-session";
-const loginRoute = require('./routes/login.route')
-const amigosRoute = require('./routes/amigos.route')
-const auth = require('./middlewares/auth')
 
 dotenv.config();
 
+const loginRoute = require('./routes/login.route')
+const amigosRoute = require('./routes/amigos.route')
+const auth = require('./middlewares/auth')
 const app: Express = express();
 const port = process.env.PORT;
 

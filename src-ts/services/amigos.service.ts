@@ -1,47 +1,60 @@
 import { Persona } from './../models/persona'
 import {db} from "./db.service";
-import { MysqlError } from "mysql";
+import { QueryError,createConnection,RowDataPacket } from 'mysql2';
+const dbConfig = require('../configs/db.config');
 
-export function getAmigos(username:String): Persona[]{
-    // Definir query (algo parecido a esto)
-    const queryString: string = `
-        SELECT 
-            u.username
-            u.puntos,
-        FROM Usuario AS u, Amigo a
-        WHERE a.amigo1=? and a.amigo2=u.username
-        UNION
-        SELECT 
-            u.username
-            u.puntos,
-        FROM Usuario AS u, Amigo a
-        WHERE a.amigo2=? and a.amigo1=u.username
-        `
-        
-    db.query(queryString, username, (err: MysqlError | null, result: any) => {
-        if (err){
-            console.log(err);
-            return null;
-        }
-        else{
-            const resultado=JSON.stringify(result);
-            var amigos : Persona[] = JSON.parse(resultado);
-            console.log("los amigos son " + amigos);
-        }
-    });
+
+export function getAmigos(username:String): Promise<Persona[]>{
     
-    return [];
+    return new Promise((resolve, reject) =>{
+        const db  = createConnection(dbConfig);
+        let amigos : Persona[] = [];
+        // Definir query 
+        const queryString: string = 'SELECT \
+                                        u.username, u.puntos \
+                                    FROM usuarios AS u, amigos AS a \
+                                    WHERE a.username = ? and a.amigo=u.username \
+                                    UNION   \
+                                    SELECT \
+                                        u.username, u.puntos \
+                                    FROM usuarios AS u, amigos AS a\
+                                    WHERE a.amigo = ? and a.username=u.username'
+        
+        db.query(queryString, [username, username], (err: QueryError | null, rows: RowDataPacket[]) => {
+            if (err){
+                console.log(err);
+                reject(err);
+            }
+            else{
+                const resultado=JSON.stringify(rows);
+                const amigos = JSON.parse(resultado);
+                console.log("estoy deberia ir antes")
+                console.log(resultado)
+                resolve(amigos)
+            }
+            
+        });
+
+        return amigos;
+    })
 }
 
 export function anadirAmigos(username1:String, username2:String): Boolean{
     // Definir query (algo parecido a esto)
+    const db  = createConnection(dbConfig);
     const queryString: string = `
-        INSERT INTO amigo(amigo1,amigo2) 
+        INSERT INTO amigos(username,amigo) 
         VALUES (?,?)
         `
         
-    db.query(queryString, [username1, username2], (err: MysqlError | null, result: any) => {
-        return err;
+    db.query(queryString, [username1, username2], (err: QueryError | null, result: any) => {
+        if (err){
+            return false;
+        }
+        else{
+            return true;
+        }
+        
     });
     
     return false;

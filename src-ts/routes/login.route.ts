@@ -13,7 +13,7 @@ loginRouter.post('/', (req: Request, res: Response) => {
         res.send('Ok, ya estabas login');
     }
     // Si existe ese usuario con esa contraseña
-    else if(username==="frontend" && password==="frontend"){
+    else if(username==="juan" && password==="juan"){
         req.session.loggeado=true;
         req.session.username=username;
         res.status(200);
