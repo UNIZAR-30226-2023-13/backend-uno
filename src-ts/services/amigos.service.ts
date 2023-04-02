@@ -26,10 +26,7 @@ export function getAmigos(username:String): Promise<Persona[]>{
                 reject(err);
             }
             else{
-                const resultado=JSON.stringify(rows);
-                const amigos = JSON.parse(resultado);
-                console.log("estoy deberia ir antes")
-                console.log(resultado)
+                const amigos = rows as Persona[]
                 resolve(amigos)
             }
             
@@ -39,23 +36,54 @@ export function getAmigos(username:String): Promise<Persona[]>{
     })
 }
 
-export function anadirAmigos(username1:String, username2:String): Boolean{
-    // Definir query (algo parecido a esto)
-    const db  = createConnection(dbConfig);
-    const queryString: string = `
-        INSERT INTO amigos(username,amigo) 
-        VALUES (?,?)
-        `
-        
-    db.query(queryString, [username1, username2], (err: QueryError | null, result: any) => {
-        if (err){
-            return false;
-        }
-        else{
-            return true;
-        }
-        
-    });
-    
-    return false;
+export function anadirAmigos(username1:String, username2:String): Promise<Boolean>{
+    return new Promise((resolve, reject) =>{
+        const db  = createConnection(dbConfig);
+
+        // Definir query para comprobar si eran amigos 
+        const queryString: string = 'INSERT INTO amigos(username,amigo) \
+                                    VALUES (?,?) \
+                                    '
+        db.query(queryString, [username1, username2], (err: QueryError | null, rows: RowDataPacket[]) => {
+            if (err){
+                console.log(err);
+                reject(err);
+            }
+            else{
+                resolve(true)
+            }
+            
+        });
+    resolve(false)
+    })
+
+}
+
+export function comprobarSiAmigos(username1:String, username2:String): Promise<Boolean>{
+    return new Promise((resolve, reject) =>{
+        const db  = createConnection(dbConfig);
+
+        // Definir query para comprobar si eran amigos 
+        const queryString: string = 'SELECT \
+                                        1 \
+                                    FROM amigos AS a \
+                                    WHERE (a.username = ? and a.amigo=?) \
+                                            or (a.amigo=? and a.username = ?)\
+                                    '
+        db.query(queryString, [username1, username2, username1, username2], (err: QueryError | null, rows: RowDataPacket[]) => {
+            if (err){
+                console.log(err);
+                reject(err);
+            }
+            else{
+                if(rows.length>0){
+                    resolve(true)
+                }
+                else{
+                    resolve(false)
+                }
+            }
+            
+        });
+    })
 }
