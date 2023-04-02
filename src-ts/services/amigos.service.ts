@@ -36,29 +36,6 @@ export function getAmigos(username:String): Promise<Persona[]>{
     })
 }
 
-export function anadirAmigos(username1:String, username2:String): Promise<Boolean>{
-    return new Promise((resolve, reject) =>{
-        const db  = createConnection(dbConfig);
-
-        // Definir query para comprobar si eran amigos 
-        const queryString: string = 'INSERT INTO amigos(username,amigo) \
-                                    VALUES (?,?) \
-                                    '
-        db.query(queryString, [username1, username2], (err: QueryError | null, rows: RowDataPacket[]) => {
-            if (err){
-                console.log(err);
-                reject(err);
-            }
-            else{
-                resolve(true)
-            }
-            
-        });
-    resolve(false)
-    })
-
-}
-
 export function comprobarSiAmigos(username1:String, username2:String): Promise<Boolean>{
     return new Promise((resolve, reject) =>{
         const db  = createConnection(dbConfig);
@@ -86,4 +63,27 @@ export function comprobarSiAmigos(username1:String, username2:String): Promise<B
             
         });
     })
+}
+
+export function anadirAmigos(username1:String, username2:String): Promise<Boolean>{
+    return new Promise((resolve, reject) =>{
+        const db  = createConnection(dbConfig);
+
+        // Definir query para comprobar si eran amigos 
+        const queryString: string = 'INSERT INTO amigos(username,amigo) \
+                                    VALUES (?,?) \
+                                    '
+        db.query(queryString, [username1, username2], (err: QueryError | null, rows: RowDataPacket[]) => {
+            if (err){
+                console.log(err);
+                reject(err);
+            }
+            else{
+                resolve(true)
+            }
+            
+        });
+    resolve(false)
+    })
+
 }
