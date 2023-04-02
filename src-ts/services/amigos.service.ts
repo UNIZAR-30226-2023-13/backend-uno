@@ -76,14 +76,14 @@ export function anadirAmigos(username1:String, username2:String): Promise<Boolea
         db.query(queryString, [username1, username2], (err: QueryError | null, rows: RowDataPacket[]) => {
             if (err){
                 console.log(err);
+                resolve(false);
                 reject(err);
             }
             else{
                 resolve(true)
             }
-            
+
         });
-    resolve(false)
     })
 
 }
