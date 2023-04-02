@@ -1,4 +1,4 @@
-import express, {Request, Response, NextFunction} from 'express';
+import {Request, Response, NextFunction} from 'express';
 
 function auth(req: Request, res: Response, next: NextFunction){
     // Si es una sesion que ya habia iniciado sesion
