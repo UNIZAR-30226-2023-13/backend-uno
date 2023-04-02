@@ -8,6 +8,7 @@ dotenv.config();
 
 const loginRoute = require('./routes/login.route')
 const amigosRoute = require('./routes/amigos.route')
+const aspectosRoute = require('./routes/aspectos.route')
 const auth = require('./middlewares/auth')
 const app: Express = express();
 const port = process.env.PORT;
@@ -26,6 +27,8 @@ app.use(cookieSession({ keys: ["mykey"] }));
 app.use('/login',loginRoute);
 
 app.use('/amigos',auth,amigosRoute);
+
+app.use('/aspectos',auth,aspectosRoute);
 
 app.get('/',auth,(req: Request, res: Response) => {
   res.send('Express + TypeScript Server (is running)');
