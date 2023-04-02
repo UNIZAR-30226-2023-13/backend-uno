@@ -54,6 +54,38 @@ export async function getAspectosCartasDesbloqueados(username: String): Promise<
     })
 }
 
+export async function cambiarAspectoCartas(username: String, nuevoTablero: String): Promise<Boolean> {
+    const aspectosDesbloqueados: Aspecto[] = await getAspectosCartasDesbloqueados(username);
+    return new Promise((resolve, reject) =>{
+        const db  = createConnection(dbConfig);
+        // Definir query 
+        const queryString: string = 'UPDATE usuarios \
+                                    SET aspecto_en_uso=? \
+                                    WHERE username = ? \
+                                    '
+        // Comprobar que es parte de los tableros desbloqueados
+        const numTableros = aspectosDesbloqueados.filter((t)=> t.nombre===nuevoTablero).length
+        // Si lo tiene desbloqueado
+        if(numTableros>0){
+            db.query(queryString, [nuevoTablero, username], (err: QueryError | null, rows: RowDataPacket[]) => {
+                if (err){
+                    console.log(err);
+                    reject(err);
+                }
+                else{
+                    
+                    resolve(true)
+                }
+                
+            });
+        }
+        // Si no lo tiene desbloqueado
+        else{
+            resolve(false)
+        }
+    })
+}
+
 export async function getTodosAspectosTableros(): Promise<Aspecto[]>{
     return new Promise((resolve, reject) =>{
         const db  = createConnection(dbConfig);
@@ -101,5 +133,37 @@ export async function getAspectosTablerosDesbloqueados(username: String): Promis
         });
 
         return aspectos;
+    })
+}
+
+export async function cambiarTablero(username: String, nuevoTablero: String): Promise<Boolean> {
+    const tablerosDesbloqueados: Aspecto[] = await getAspectosTablerosDesbloqueados(username);
+    return new Promise((resolve, reject) =>{
+        const db  = createConnection(dbConfig);
+        // Definir query 
+        const queryString: string = 'UPDATE usuarios \
+                                    SET tablero_en_uso=? \
+                                    WHERE username = ? \
+                                    '
+        // Comprobar que es parte de los tableros desbloqueados
+        const numTableros = tablerosDesbloqueados.filter((t)=> t.nombre===nuevoTablero).length
+        // Si lo tiene desbloqueado
+        if(numTableros>0){
+            db.query(queryString, [nuevoTablero, username], (err: QueryError | null, rows: RowDataPacket[]) => {
+                if (err){
+                    console.log(err);
+                    reject(err);
+                }
+                else{
+                    
+                    resolve(true)
+                }
+                
+            });
+        }
+        // Si no lo tiene desbloqueado
+        else{
+            resolve(false)
+        }
     })
 }
