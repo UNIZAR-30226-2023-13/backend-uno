@@ -36,6 +36,56 @@ export function getAmigos(username:String): Promise<Persona[]>{
     })
 }
 
+export function getInvitaciones(username:String): Promise<Persona[]>{
+    return new Promise((resolve, reject) =>{
+        const db  = createConnection(dbConfig);
+        let amigos : Persona[] = [];
+        // Definir query 
+        const queryString: string = 'SELECT \
+                                        u.username, u.puntos \
+                                    FROM usuarios AS u, solicitudes_amistad AS s \
+                                    WHERE s.amigo = ? and s.username=u.username \
+                                    '
+        
+        db.query(queryString, [username, username], (err: QueryError | null, rows: RowDataPacket[]) => {
+            if (err){
+                console.log(err);
+                reject(err);
+            }
+            else{
+                const solicitudes = rows as Persona[]
+                resolve(solicitudes)
+            }
+            
+        });
+
+        return amigos;
+    })
+}
+
+export function enviarInvitacion(username1:String, username2:String): Promise<Boolean>{
+    return new Promise((resolve, reject) =>{
+        const db  = createConnection(dbConfig);
+
+        // Definir query para comprobar si eran amigos 
+        const queryString: string = 'INSERT INTO solicitudes_amistad(username,amigo) \
+                                    VALUES (?,?) \
+                                    '
+        db.query(queryString, [username1, username2], (err: QueryError | null, rows: RowDataPacket[]) => {
+            if (err){
+                console.log(err);
+                resolve(false);
+                reject(err);
+            }
+            else{
+                resolve(true)
+            }
+
+        });
+    })
+}
+
+
 export function comprobarSiAmigos(username1:String, username2:String): Promise<Boolean>{
     return new Promise((resolve, reject) =>{
         const db  = createConnection(dbConfig);
@@ -85,5 +135,4 @@ export function anadirAmigos(username1:String, username2:String): Promise<Boolea
 
         });
     })
-
 }
