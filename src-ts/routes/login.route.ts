@@ -29,4 +29,17 @@ loginRouter.post('/', async(req: Request, res: Response) => {
     }
 });
 
+loginRouter.get('/quien-soy', (req: Request, res: Response) => {
+    var username = "";
+    if(req.session.username){
+        username =  req.session.username;
+        res.status(200);
+        res.send(username);
+    }
+    else{
+        res.status(401);
+        res.send();
+    }
+});
+
 module.exports = loginRouter;
