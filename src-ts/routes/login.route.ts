@@ -34,7 +34,7 @@ loginRouter.get('/quien-soy', (req: Request, res: Response) => {
     if(req.session.username){
         username =  req.session.username;
         res.status(200);
-        res.send(username);
+        res.json(username);
     }
     else{
         res.status(401);
