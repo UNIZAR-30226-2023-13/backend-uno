@@ -4,21 +4,26 @@ import { QueryError,createConnection,RowDataPacket } from 'mysql2';
 const dbConfig = require('../configs/db.config');
 
 
-export async function getTodosAspectosCartas(): Promise<Aspecto[]>{
+export async function getAspectosCartas(username: String): Promise<Aspecto[]>{
     return new Promise((resolve, reject) =>{
         const db  = createConnection(dbConfig);
         let aspectos : Aspecto[] = [];
         // Definir query 
-        const queryString: string = 'SELECT * \
-                                    FROM aspectos'
+        const queryString: string = 'SELECT a.nombre, a.ruta, a.puntos_desbloqueo, (u.puntos>=a.puntos_desbloqueo) AS desbloqueado \
+                                    FROM aspectos AS a, usuarios AS u \
+                                    WHERE u.username = ? \
+                                    '
         
-        db.query(queryString, (err: QueryError | null, rows: RowDataPacket[]) => {
+        db.query(queryString, username, (err: QueryError | null, rows: RowDataPacket[]) => {
             if (err){
                 console.log(err);
                 reject(err);
             }
             else{
-                const aspectos = rows as Aspecto[]
+                const aspectos = rows.map((row: RowDataPacket) => ({
+                    ...row,
+                    desbloqueado: (row.desbloqueado === 1 ? true : false),
+                })) as Aspecto[]; 
                 resolve(aspectos)
             }
             
@@ -86,21 +91,26 @@ export async function cambiarAspectoCartas(username: String, nuevoTablero: Strin
     })
 }
 
-export async function getTodosAspectosTableros(): Promise<Aspecto[]>{
+export async function getAspectosTableros(username: String): Promise<Aspecto[]>{
     return new Promise((resolve, reject) =>{
         const db  = createConnection(dbConfig);
         let aspectos : Aspecto[] = [];
         // Definir query 
-        const queryString: string = 'SELECT * \
-                                    FROM tableros'
+        const queryString: string = 'SELECT t.nombre, t.ruta, t.puntos_desbloqueo, (u.puntos>=t.puntos_desbloqueo) AS desbloqueado \
+                                    FROM tableros AS t, usuarios AS u \
+                                    WHERE u.username = ? \
+                                    '
         
-        db.query(queryString, (err: QueryError | null, rows: RowDataPacket[]) => {
+        db.query(queryString, username, (err: QueryError | null, rows: RowDataPacket[]) => {
             if (err){
                 console.log(err);
                 reject(err);
             }
             else{
-                const aspectos = rows as Aspecto[]
+                const aspectos = rows.map((row: RowDataPacket) => ({
+                    ...row,
+                    desbloqueado: (row.desbloqueado === 1 ? true : false),
+                })) as Aspecto[]; 
                 resolve(aspectos)
             }
             
