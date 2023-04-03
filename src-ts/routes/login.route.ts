@@ -9,7 +9,7 @@ loginRouter.post('/', async(req: Request, res: Response) => {
 
     // Si es una sesion que ya habia iniciado sesion
     if(req.session.loggeado === true){
-        res.status(100);
+        res.status(200);
         res.send('Ok, ya estabas login');
     }
     // Buscamos en la BD si existe un usuario con ese nombre y contraseña

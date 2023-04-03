@@ -21,11 +21,17 @@ declare module 'express-session' {
   }
 }
 
-app.use(cors());
+app.use(cors({
+  credentials: true,
+  origin: 'http://localhost:3000'
+}));
 
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({extended:true}));
-app.use(cookieSession({ keys: ["mykey"] }));
+app.use(cookieSession({ 
+  maxAge: 1000*60*60*24,
+  keys: ["mykey"]
+}));
 
 app.use('/login',loginRoute);
 
