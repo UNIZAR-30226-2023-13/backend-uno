@@ -10,6 +10,7 @@ const loginRoute = require('./routes/login.route')
 const amigosRoute = require('./routes/amigos.route')
 const aspectosRoute = require('./routes/aspectos.route')
 const auth = require('./middlewares/auth')
+const cors = require('cors')
 const app: Express = express();
 const port = process.env.PORT;
 
@@ -19,6 +20,8 @@ declare module 'express-session' {
     loggeado: boolean;
   }
 }
+
+app.use(cors());
 
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({extended:true}));
