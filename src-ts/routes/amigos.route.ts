@@ -18,7 +18,6 @@ amigosRouter.get('/', async(req: Request, res: Response) => {
         // Obtener array de amigos
         const amigos : Persona[] = await getAmigos(username);
         res.json(amigos);
-        res.send();
     }
     // Si pide informacion sobre otro usuario
     else{
@@ -40,7 +39,6 @@ amigosRouter.get('/invitaciones', async(req: Request, res: Response) => {
         // Obtener array de amigos
         const amigos : Persona[] = await getInvitaciones(username);
         res.json(amigos);
-        res.send();
     }
     // Si pide informacion sobre otro usuario
     else{

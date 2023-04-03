@@ -12,7 +12,6 @@ aspectosRouter.get('/cartas', async(req: Request, res: Response) => {
         const aspectos : Aspecto[] = await getAspectosCartas(username);
         res.status(200);
         res.json(aspectos);
-        res.send();
     }
     else{
         res.status(401);
@@ -27,7 +26,6 @@ aspectosRouter.get('/cartas/desbloqueadas', async(req: Request, res: Response) =
         const aspectos : Aspecto[] = await getAspectosCartasDesbloqueados(username);
         res.status(200);
         res.json(aspectos);
-        res.send();
     }
     else{
         res.status(401);
@@ -63,7 +61,6 @@ aspectosRouter.get('/tableros', async(req: Request, res: Response) => {
         const aspectos : Aspecto[] = await getAspectosTableros(username);
         res.status(200);
         res.json(aspectos);
-        res.send();
     }
     else{
         res.status(401);
@@ -78,7 +75,6 @@ aspectosRouter.get('/tableros/desbloqueados', async(req: Request, res: Response)
         const aspectos : Aspecto[] = await getAspectosTablerosDesbloqueados(username);
         res.status(200);
         res.json(aspectos);
-        res.send();
     }
     else{
         res.status(401);
