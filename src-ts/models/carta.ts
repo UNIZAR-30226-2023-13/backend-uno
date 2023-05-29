@@ -1,5 +1,8 @@
+export type Color = "rojo" | "verde" | "azul" | "amarillo"
+export type Accion = "cambio color" | "cambio sentido" | "roba 2" | "roba 4" | "prohibido" 
+
 export class Carta {
     numero?: number = 0;
-    color?: "rojo" | "verde" | "azul" | "amarillo"
-    accion?: "cambio color" | "cambio sentido" | "roba 2" | "roba 4" 
+    color?: Color
+    accion?: Accion
 }
