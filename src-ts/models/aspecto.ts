@@ -3,4 +3,5 @@ export interface Aspecto {
     url: string
     puntosDebloqueo: number
     desbloqueado?: boolean
+    enUso ?: boolean
 }
