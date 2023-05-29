@@ -92,6 +92,19 @@ export class Tablero {
         }
     }
 
+    repartirCartasIniciales(): void{
+        let numCartasRepartir = 7
+        while (numCartasRepartir > 0){
+            for (let jugador of this.jugadores){
+                const carta = this.mazoCentral.pop()
+                if (carta){
+                    jugador.mano.push(carta as Carta)    
+                }
+            }
+            numCartasRepartir--;
+        }
+    }
+
     pasarTurno(): void{
         if(this.sentidoHorario){
             this.turno++

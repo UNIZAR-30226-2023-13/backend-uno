@@ -1,18 +1,38 @@
+import { Tablero } from './../../../src-ts/models/tablero'
 import { Jugador } from './../../../src-ts/models/jugador'
 import { Carta } from './../../../src-ts/models/carta'
-import {Tablero} from "../../../src-ts/models/tablero"
 
 test('crearTableroVacio', ()=>{
     const numCartas: number = 108
-    const tableroVacio = new Tablero()
+    const tableroVacio: Tablero = new Tablero()
     expect(tableroVacio.mazoCentral.length).toEqual(numCartas)
 })
 
 test('mezclarMazoCentral', ()=>{
-    const tableroSinMezclar = new Tablero();
+    const tableroSinMezclar : Tablero = new Tablero();
     const tableroMezclado = new Tablero()
     tableroMezclado.mezclarBarajaCentral();
     expect(tableroSinMezclar).not.toEqual(tableroMezclado)
+})
+
+test('repartirCartas', ()=>{
+    const tablero : Tablero = new Tablero();
+    const jugador1 : Jugador = {
+        username: "jugador1",
+        puntos: 0,
+        mano: []
+    }
+    const jugador2 : Jugador = {
+        username: "jugador2",
+        puntos: 0,
+        mano: []
+    }
+    tablero.anadirJugador(jugador1)
+    tablero.anadirJugador(jugador2)
+
+    tablero.repartirCartasIniciales()
+    expect(jugador1.mano).toHaveLength(7);
+    expect(jugador2.mano).toHaveLength(7);
 })
 
 test('anadirUnSoloJugador', ()=>{
@@ -21,8 +41,8 @@ test('anadirUnSoloJugador', ()=>{
         puntos: 0,
         mano: []
     }
-    var tableroVacio = new Tablero ([],[],[],true)
-    var tableroConJugador = new Tablero([],[],[jugador],true)
+    var tableroVacio : Tablero = new Tablero ([],[],[],true)
+    var tableroConJugador : Tablero = new Tablero([],[],[jugador],true)
     tableroVacio.anadirJugador(jugador)
     expect(tableroVacio).toEqual(tableroConJugador)
 });
@@ -40,8 +60,8 @@ test('anadirDosJugadores', ()=>{
         puntos: 0,
         mano: []
     }
-    var tableroVacio = new Tablero ([],[],[],true)
-    var tableroConJugadores = new Tablero([],[],[jugador1,jugador2],true)
+    var tableroVacio : Tablero = new Tablero ([],[],[],true)
+    var tableroConJugadores : Tablero = new Tablero([],[],[jugador1,jugador2],true)
     tableroVacio.anadirJugador(jugador1)
     tableroVacio.anadirJugador(jugador2)
     expect(tableroVacio).toEqual(tableroConJugadores)
@@ -53,8 +73,8 @@ test('eliminarUnSoloJugador', ()=>{
         puntos: 0,
         mano: []
     }
-    var tableroVacio = new Tablero ([],[],[],true)
-    var tableroConJugador = new Tablero([],[],[jugador],true)
+    var tableroVacio : Tablero = new Tablero ([],[],[],true)
+    var tableroConJugador : Tablero = new Tablero([],[],[jugador],true)
     tableroConJugador.eliminarJugador(jugador)
     expect(tableroConJugador).toEqual(tableroVacio)
 });
@@ -70,8 +90,8 @@ test('eliminarDosJugadores', ()=>{
         puntos: 0,
         mano: []
     }
-    var tableroVacio = new Tablero ([],[],[],true)
-    var tableroConJugadores = new Tablero([],[],[jugador1,jugador2],true)
+    var tableroVacio : Tablero = new Tablero ([],[],[],true)
+    var tableroConJugadores : Tablero = new Tablero([],[],[jugador1,jugador2],true)
     tableroConJugadores.eliminarJugador(jugador1)
     tableroConJugadores.eliminarJugador(jugador2)
     expect(tableroConJugadores).toEqual(tableroVacio)
@@ -83,7 +103,7 @@ test('eliminarJugadorNoExiste', ()=>{
         puntos: 0,
         mano: []
     }
-    var tableroVacio = new Tablero ([],[],[],true)
+    var tableroVacio : Tablero = new Tablero ([],[],[],true)
     expect(tableroVacio.eliminarJugador(jugador)).toEqual(false)
 });
 
@@ -104,8 +124,8 @@ test('robarCarta', ()=>{
             cartaAñadir
         ]
     }
-    var tableroInicial = new Tablero([cartaAñadir],[],[jugadorSinCarta],true)
-    var tableroEsperado = new Tablero ([],[],[jugadorConCarta],true)
+    var tableroInicial : Tablero = new Tablero([cartaAñadir],[],[jugadorSinCarta],true)
+    var tableroEsperado : Tablero = new Tablero ([],[],[jugadorConCarta],true)
     tableroInicial.robarCarta(jugadorSinCarta)
     expect(tableroInicial).toEqual(tableroEsperado)
 });
@@ -127,8 +147,8 @@ test('jugarCarta', ()=>{
         puntos: 0,
         mano: []
     }
-    var tableroInicial = new Tablero([],[],[jugadorConCarta],true)
-    var tableroEsperado = new Tablero ([],[cartaJugar],[jugadorSinCarta],true)
+    var tableroInicial : Tablero = new Tablero([],[],[jugadorConCarta],true)
+    var tableroEsperado : Tablero = new Tablero ([],[cartaJugar],[jugadorSinCarta],true)
     tableroInicial.jugarCarta(cartaJugar,jugadorConCarta)
     expect(tableroInicial).toEqual(tableroEsperado)
 });
