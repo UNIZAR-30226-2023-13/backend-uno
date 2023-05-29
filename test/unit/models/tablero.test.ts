@@ -2,6 +2,19 @@ import { Jugador } from './../../../src-ts/models/jugador'
 import { Carta } from './../../../src-ts/models/carta'
 import {Tablero} from "../../../src-ts/models/tablero"
 
+test('crearTableroVacio', ()=>{
+    const numCartas: number = 108
+    const tableroVacio = new Tablero()
+    expect(tableroVacio.mazoCentral.length).toEqual(numCartas)
+})
+
+test('mezclarMazoCentral', ()=>{
+    const tableroSinMezclar = new Tablero();
+    const tableroMezclado = new Tablero()
+    tableroMezclado.mezclarBarajaCentral();
+    expect(tableroSinMezclar).not.toEqual(tableroMezclado)
+})
+
 test('anadirUnSoloJugador', ()=>{
     const jugador : Jugador = {
         username: "juancatalan",
