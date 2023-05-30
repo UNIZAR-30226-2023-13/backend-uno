@@ -8,6 +8,8 @@ export class Tablero {
     mazoCentral: Carta[] = []
     mazoDescartes: Carta[] = []
     jugadores: Jugador[] = []
+    ganador: Jugador | null = null
+    finalizado: boolean  = false
 
     sentidoHorario: boolean = true
     turno: number = 0
@@ -76,6 +78,27 @@ export class Tablero {
         }
     }
 
+    siguienteJugador(): Jugador{
+        var indJugador: number;
+        if(this.sentidoHorario){
+            if(this.turno >= this.jugadores.length){
+                indJugador = 0
+            }
+            else{
+                indJugador = this.turno+1
+            }
+        }
+        else {
+            if(this.turno === 0){
+                indJugador = this.jugadores.length
+            }
+            else{
+                indJugador = this.turno - 1
+            }
+        }
+        return this.jugadores[indJugador]
+    }
+
     mezclarBarajaCentral(): void{
         let currentIndex: number = this.mazoCentral.length
         let randomIndex: number;
@@ -89,6 +112,12 @@ export class Tablero {
             // And swap it with the current element.
             [this.mazoCentral[currentIndex], this.mazoCentral[randomIndex]] = [
                 this.mazoCentral[randomIndex], this.mazoCentral[currentIndex]];
+        }
+        
+        // Eligo una carta como la carta mazo de descartes
+        const carta = this.mazoCentral.pop()
+        if (carta){
+            this.mazoCentral.push(carta as Carta)    
         }
     }
 
@@ -120,9 +149,10 @@ export class Tablero {
         }
     }
 
-    anadirJugador(nuevo_jugador: Jugador): boolean{
+
+    anadirJugador(nuevoJugador: Jugador): boolean{
         if(this.jugadores.length < 4){
-            this.jugadores.push(nuevo_jugador)
+            this.jugadores.push(nuevoJugador)
             return true
         }
         return false
@@ -132,7 +162,11 @@ export class Tablero {
         if(!this.jugadores.includes(jugadorAEliminar)){
             return false
         }
+        // Si el jugador si existe
         else{
+            // Meto su mano en el mazo central
+            this.mazoCentral.push(...jugadorAEliminar.mano)
+
             this.jugadores = this.jugadores.filter((j) =>
                 j.username!==jugadorAEliminar.username
             )
@@ -142,14 +176,81 @@ export class Tablero {
 
     robarCarta(jugador: Jugador): void{
         const cartaRobada = this.mazoCentral.pop()
-        cartaRobada ? jugador.mano.push(cartaRobada) : console.error("No habia más cartas para robar") 
+        // Si habia cartas en el mazo central
+        if (cartaRobada){
+            // Lo añado a la mano del jugador
+            jugador.mano.push(cartaRobada)
+        }
+        // Si no habia cartas, debo mezclar las del mazo de descartes
+        else {
+            // Guardo la ultima mazo de descartes
+            const ultimaCarta = this.mazoDescartes.pop()
+            this.mazoCentral = this.mazoDescartes
+            if (ultimaCarta){
+                this.mazoDescartes = [ultimaCarta]
+            }
+            // Mezclo el mazo central
+            this.mezclarBarajaCentral()
+            // Roba la carta que toca del nuevo mazo
+            this.robarCarta(jugador)
+        }
     }
 
-    jugarCarta(carta: Carta, jugador: Jugador){
-        jugador.mano = jugador.mano.filter((c) => c!==carta)
-        // EFECTO DE LA CARTA
-        if(true){
+    jugarCarta(carta: Carta, jugador: Jugador, penultimaCarta: boolean = false) : void{
+        if (jugador.mano.length===2 && !penultimaCarta){
+            this.robarCarta(jugador)
+            this.robarCarta(jugador)
+        }
+        // Comprueba que es una carta jugable
+        // Si es del mismo color
+        const cartaCentral= this.mazoDescartes.at(0);
+        if (cartaCentral && carta.color===cartaCentral.color){
+            // Si no es una carta de accion
+            if (carta.accion){
+                switch (carta.accion) {
+                    case "roba 2":
+                        this.robarCarta(this.siguienteJugador())
+                        this.robarCarta(this.siguienteJugador())
+                        break;
+                    case "cambio sentido":
+                        this.sentidoHorario = !this.sentidoHorario
+                        break;
+                    case "prohibido":
+                        this.pasarTurno()
+                        break;
+                }
+            }
+            // Eliminar la carta y añadirla al mazoDescartes
+            jugador.mano = jugador.mano.filter((c) => c!==carta)
             this.mazoDescartes.unshift(carta)
+            // Pasar el turno
+            this.pasarTurno()
+        }        
+        // Si es una carta que se puede jugar aunque no sea del mismo color
+        else if (carta.accion = "cambio color"){
+            // Eliminar la carta y añadirla al mazoDescartes
+            jugador.mano = jugador.mano.filter((c) => c!==carta)
+            carta.color = carta.colorCambio
+            this.mazoDescartes.unshift(carta)
+            // Pasar el turno
+            this.pasarTurno()
+        }
+        else if (carta.accion = "roba 4"){
+            this.robarCarta(this.siguienteJugador())
+            this.robarCarta(this.siguienteJugador())
+            this.robarCarta(this.siguienteJugador())
+            this.robarCarta(this.siguienteJugador())
+            // Eliminar la carta y añadirla al mazoDescartes
+            jugador.mano = jugador.mano.filter((c) => c!==carta)
+            carta.color = carta.colorCambio
+            this.mazoDescartes.unshift(carta)
+            // Pasar el turno
+            this.pasarTurno()
+        }
+        
+        if (jugador.mano.length === 0){
+            this.ganador  = jugador
+            this.finalizado = true
         }
     }
 }

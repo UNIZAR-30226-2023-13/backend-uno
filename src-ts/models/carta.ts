@@ -5,4 +5,5 @@ export class Carta {
     numero?: number = 0;
     color?: Color
     accion?: Accion
+    colorCambio?: Color
 }

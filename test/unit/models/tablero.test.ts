@@ -47,8 +47,6 @@ test('anadirUnSoloJugador', ()=>{
     expect(tableroVacio).toEqual(tableroConJugador)
 });
 
-
-
 test('anadirDosJugadores', ()=>{
     const jugador1 : Jugador = {
         username: "juancatalan",
@@ -68,15 +66,19 @@ test('anadirDosJugadores', ()=>{
 });
 
 test('eliminarUnSoloJugador', ()=>{
+    const carta: Carta = {
+        color: "rojo",
+        numero: 1
+    }
     const jugador : Jugador = {
         username: "juancatalan",
         puntos: 0,
-        mano: []
+        mano: [carta]
     }
-    var tableroVacio : Tablero = new Tablero ([],[],[],true)
+    var tableroSinJugador : Tablero = new Tablero ([carta],[],[],true)
     var tableroConJugador : Tablero = new Tablero([],[],[jugador],true)
     tableroConJugador.eliminarJugador(jugador)
-    expect(tableroConJugador).toEqual(tableroVacio)
+    expect(tableroConJugador).toEqual(tableroSinJugador)
 });
 
 test('eliminarDosJugadores', ()=>{
@@ -130,7 +132,28 @@ test('robarCarta', ()=>{
     expect(tableroInicial).toEqual(tableroEsperado)
 });
 
-test('jugarCarta', ()=>{
+test('robar2CartasConSolo1Centro', ()=>{
+    const cartaMazoCentral : Carta = {
+        numero: 1,
+        color: "rojo"
+    }
+    const cartaMazoDescartes : Carta = {
+        numero: 2,
+        color: "azul"
+    }
+    const jugador : Jugador = {
+        username: "juancatalan",
+        puntos: 0,
+        mano: []
+    }
+    var tableroInicial : Tablero = new Tablero([cartaMazoCentral],[cartaMazoDescartes, cartaMazoDescartes],[jugador],true)
+    tableroInicial.robarCarta(jugador)
+    tableroInicial.robarCarta(jugador)
+    expect(jugador.mano).toContainEqual(cartaMazoCentral)
+    expect(jugador.mano).toContainEqual(cartaMazoDescartes)
+});
+
+test('jugarCartaNormal', ()=>{
     const cartaJugar : Carta = {
         numero: 1,
         color: "rojo"
@@ -151,4 +174,94 @@ test('jugarCarta', ()=>{
     var tableroEsperado : Tablero = new Tablero ([],[cartaJugar],[jugadorSinCarta],true)
     tableroInicial.jugarCarta(cartaJugar,jugadorConCarta)
     expect(tableroInicial).toEqual(tableroEsperado)
+});
+
+test('jugarRoba2', ()=>{
+    const cartaMazoCentral : Carta = {
+        numero: 8,
+        color: "verde"
+    }
+    const cartaMazoDescartes : Carta = {
+        numero: 1,
+        color: "azul"
+    }
+    
+    const jugadorRobador : Jugador = {
+        username: "jugador robador",
+        puntos: 0,
+        mano: []
+    }
+    const jugadorQueJuegaCarta : Jugador = {
+        username: "jugador jugador",
+        puntos: 0,
+        mano: [{color: "azul", accion: "roba 2"}]
+    }
+    var tablero : Tablero = new Tablero([cartaMazoCentral,cartaMazoCentral],[cartaMazoDescartes],[jugadorQueJuegaCarta,jugadorRobador],true)
+    tablero.jugarCarta({color: "azul", accion: "roba 2"}, jugadorQueJuegaCarta)
+    expect(jugadorRobador.mano).toHaveLength(2)
+    expect(jugadorRobador.mano).toContain(cartaMazoCentral)
+    jugadorRobador.mano.pop()
+    expect(jugadorRobador.mano).toContain(cartaMazoCentral) 
+});
+
+test('jugarCambioSentido', ()=>{
+    const cartaMazoCentral : Carta = {
+        numero: 8,
+        color: "verde"
+    }
+    const cartaMazoDescartes : Carta = {
+        numero: 1,
+        color: "azul"
+    }
+    
+    const jugadorSiguiente : Jugador = {
+        username: "jugador siguiente",
+        puntos: 0,
+        mano: []
+    }
+    const jugadorAnterior : Jugador = {
+        username: "jugador anterior",
+        puntos: 0,
+        mano: []
+    }
+    const jugadorQueJuegaCarta : Jugador = {
+        username: "jugador jugador",
+        puntos: 0,
+        mano: [{color: "azul", accion: "cambio sentido"}]
+    }
+    var tablero : Tablero = new Tablero([cartaMazoCentral],[cartaMazoDescartes],[jugadorQueJuegaCarta,jugadorSiguiente, jugadorAnterior],true)
+    expect(tablero.siguienteJugador()).toEqual(jugadorSiguiente)
+    tablero.jugarCarta({color: "azul", accion: "cambio sentido"}, jugadorQueJuegaCarta)
+    expect(tablero.jugadores[tablero.turno]).toEqual(jugadorAnterior)
+});
+
+test('jugarCambioColor', ()=>{
+    const cartaMazoCentral : Carta = {
+        numero: 8,
+        color: "verde"
+    }
+    const cartaMazoDescartes : Carta = {
+        numero: 1,
+        color: "rojo"
+    }
+    
+    const jugadorSiguiente : Jugador = {
+        username: "jugador siguiente",
+        puntos: 0,
+        mano: []
+    }
+    const jugadorAnterior : Jugador = {
+        username: "jugador anterior",
+        puntos: 0,
+        mano: []
+    }
+    const jugadorQueJuegaCarta : Jugador = {
+        username: "jugador jugador",
+        puntos: 0,
+        mano: [{colorCambio: "azul", accion: "cambio color"}]
+    }
+    var tablero : Tablero = new Tablero([cartaMazoCentral],[cartaMazoDescartes],[jugadorQueJuegaCarta,jugadorSiguiente, jugadorAnterior],true)
+    tablero.jugarCarta({colorCambio: "azul", accion: "cambio color"}, jugadorQueJuegaCarta)
+    expect(tablero.mazoDescartes.at(0)?.color).toEqual("azul")
+    console.log(tablero.ganador)
 });
