@@ -149,7 +149,7 @@ export function anadirAmigos(
         db.query(
             queryString,
             [username1, username2],
-            (err: QueryError | null, rows: RowDataPacket[]) => {
+            (err: QueryError | null) => {
                 if (err) {
                     console.log(err);
                     resolve(false);
@@ -159,5 +159,7 @@ export function anadirAmigos(
                 }
             }
         );
+
+        // Eliminar la invitacion
     });
 }

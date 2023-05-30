@@ -15,9 +15,9 @@ signUpRouter.post("/", async (req: Request, res: Response) => {
         res.status(200);
         res.send("Ok, cuenta creada");
     }
-    // Si no existe un usuario con esa contraseña
+    // Si ya existe un usuario con ese username
     else {
-        res.status(401);
+        res.status(403);
         res.send("Ya existe un usuario con ese username");
     }
 });
