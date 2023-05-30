@@ -1,6 +1,11 @@
+/*
 import { Connection } from "mysql";
 
-const mysql = require('mysql2/promise');
-const dbConfig = require('../configs/db.config');
+import mysql = require("mysql2/promise");
+import dbConfig = require("../configs/db.config");
+import { ConnectionOptions } from "mysql2";
 
-export const db : Connection = mysql.createConnection(dbConfig);
+export const db: Connection = mysql.createConnection(
+    dbConfig as ConnectionOptions
+);
+*/

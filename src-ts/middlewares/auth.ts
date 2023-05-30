@@ -1,14 +1,13 @@
-import {Request, Response, NextFunction} from 'express';
+import { Request, Response, NextFunction } from "express";
 
-function auth(req: Request, res: Response, next: NextFunction){
+function auth(req: Request, res: Response, next: NextFunction) {
     // Si es una sesion que ya habia iniciado sesion
-    if(req.session.loggeado === true){
+    if (req.session.loggeado === true) {
         next();
-    }
-    else {
+    } else {
         res.status(401);
-        res.send('No tienes permisos');
+        res.send("No tienes permisos");
     }
-};
+}
 
-module.exports = auth
+module.exports = auth;

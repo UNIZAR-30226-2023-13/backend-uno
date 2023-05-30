@@ -1,4 +1,4 @@
 export interface Persona {
-    username: string
-    puntos: number
+    username: string;
+    puntos: number;
 }

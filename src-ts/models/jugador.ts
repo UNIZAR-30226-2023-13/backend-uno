@@ -1,7 +1,7 @@
-import { Carta } from "./carta"
+import { Carta } from "./carta";
 
 export interface Jugador {
-    username: string
-    puntos: number
-    mano: Carta[]
+    username: string;
+    puntos: number;
+    mano: Carta[];
 }
