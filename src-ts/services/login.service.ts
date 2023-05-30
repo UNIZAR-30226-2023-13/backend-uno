@@ -16,9 +16,9 @@ export async function comprobarContrasena(
         // Definir query
         const queryString =
             "SELECT \
-                                        u.password \
-                                    FROM usuarios AS u \
-                                    WHERE u.username = ?";
+                u.password \
+            FROM usuarios AS u \
+            WHERE u.username = ?";
 
         db.query(
             queryString,
@@ -37,6 +37,36 @@ export async function comprobarContrasena(
                         resolve(iguales);
                     } else {
                         resolve(false);
+                    }
+                }
+            }
+        );
+    });
+}
+
+export async function obtenerCorreo(username: string): Promise<string> {
+    return new Promise((resolve, reject) => {
+        const db = createConnection(dbConfig as ConnectionOptions);
+        // Definir query
+        const queryString =
+            "SELECT \
+                u.email \
+            FROM usuarios AS u \
+            WHERE u.username = ?";
+
+        db.query(
+            queryString,
+            [username],
+            async (err: QueryError | null, rows: RowDataPacket[]) => {
+                if (err) {
+                    console.log(err);
+                    reject(err);
+                } else {
+                    if (rows.length > 0) {
+                        const email: string = rows[0].email;
+                        resolve(email);
+                    } else {
+                        reject(err);
                     }
                 }
             }

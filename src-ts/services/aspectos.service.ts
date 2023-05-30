@@ -221,7 +221,7 @@ export async function cambiarTablero(
             db.query(
                 queryString,
                 [nuevoTablero, username],
-                (err: QueryError | null, rows: RowDataPacket[]) => {
+                (err: QueryError | null) => {
                     if (err) {
                         console.log(err);
                         reject(err);

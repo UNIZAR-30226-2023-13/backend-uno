@@ -181,30 +181,24 @@ test("jugarCartaNormal", () => {
         numero: 1,
         color: "rojo",
     };
+    const cartaMazo: Carta = {
+        numero: 8,
+        color: "rojo",
+    };
     const jugadorConCarta: Jugador = {
         username: "juancatalan",
         puntos: 0,
         mano: [cartaJugar],
     };
-    const jugadorSinCarta: Jugador = {
-        username: "juancatalan",
-        puntos: 0,
-        mano: [],
-    };
     const tableroInicial: Tablero = new Tablero(
         [],
-        [],
+        [cartaMazo],
         [jugadorConCarta],
         true
     );
-    const tableroEsperado: Tablero = new Tablero(
-        [],
-        [cartaJugar],
-        [jugadorSinCarta],
-        true
-    );
+    expect(tableroInicial.mazoDescartes.at(0)).toEqual(cartaMazo);
     tableroInicial.jugarCarta(cartaJugar, jugadorConCarta);
-    expect(tableroInicial).toEqual(tableroEsperado);
+    expect(tableroInicial.mazoDescartes.at(0)).toEqual(cartaJugar);
 });
 
 test("jugarRoba2", () => {

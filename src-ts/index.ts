@@ -8,6 +8,8 @@ dotenv.config();
 
 import loginRoute = require("./routes/login.route");
 import amigosRoute = require("./routes/amigos.route");
+import signUpRouter = require("./routes/signup.route");
+import cuentaRouter = require("./routes/cuenta.route");
 import aspectosRoute = require("./routes/aspectos.route");
 import auth = require("./middlewares/auth");
 import cors from "cors";
@@ -38,6 +40,10 @@ app.use(
 );
 
 app.use("/login", loginRoute as RequestHandler);
+
+app.use("/signup", signUpRouter as RequestHandler);
+
+app.use("/cuenta", cuentaRouter as RequestHandler);
 
 app.use("/amigos", auth as RequestHandler, amigosRoute as RequestHandler);
 

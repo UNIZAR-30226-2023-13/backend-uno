@@ -1,5 +1,5 @@
 import express, { Request, Response, Router } from "express";
-import { comprobarContrasena } from "../services/login.service";
+import { comprobarContrasena, obtenerCorreo } from "../services/login.service";
 const loginRouter: Router = express.Router();
 
 loginRouter.post("/", async (req: Request, res: Response) => {
@@ -28,12 +28,13 @@ loginRouter.post("/", async (req: Request, res: Response) => {
     }
 });
 
-loginRouter.get("/quien-soy", (req: Request, res: Response) => {
+loginRouter.get("/quien-soy", async (req: Request, res: Response) => {
     let username = "";
     if (req.session.username) {
         username = req.session.username;
+        const email: string = await obtenerCorreo(username);
         res.status(200);
-        res.json(username);
+        res.json({ username, email });
     } else {
         res.status(401);
         res.send();

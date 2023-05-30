@@ -22,13 +22,13 @@ export class Tablero {
 
     constructor();
 
-    constructor(...args: Array<any>) {
+    constructor(...args: Array<unknown>) {
         // Si estamos creando el tablero a partir del mazoCentral, mazoDescartes, jugadores, sentidoHorario
         if (args.length === 4) {
-            const mazoCentral: Carta[] = args[0];
-            const mazoDescartes: Carta[] = args[1];
-            const jugadores: Jugador[] = args[2];
-            const sentidoHorario: boolean = args[3];
+            const mazoCentral: Carta[] = args[0] as Carta[];
+            const mazoDescartes: Carta[] = args[1] as Carta[];
+            const jugadores: Jugador[] = args[2] as Jugador[];
+            const sentidoHorario: boolean = args[3] as boolean;
             this.mazoCentral = mazoCentral;
             this.mazoDescartes = mazoDescartes;
             this.jugadores = jugadores;
@@ -201,6 +201,7 @@ export class Tablero {
     }
 
     jugarCarta(carta: Carta, jugador: Jugador, penultimaCarta = false): void {
+        // Si deberia haber marcado UNO! y no lo hizo
         if (jugador.mano.length === 2 && !penultimaCarta) {
             this.robarCarta(jugador);
             this.robarCarta(jugador);
