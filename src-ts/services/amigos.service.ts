@@ -56,7 +56,7 @@ export function getInvitaciones(username: string): Promise<Persona[]> {
 
         db.query(
             queryString,
-            [username, username],
+            [username],
             (err: QueryError | null, rows: RowDataPacket[]) => {
                 if (err) {
                     console.log(err);
@@ -161,5 +161,24 @@ export function anadirAmigos(
         );
 
         // Eliminar la invitacion
+
+        // Definir query para comprobar si eran amigos
+        const queryStringEliminacion =
+            "DELETE FROM solicitudes_amistad \
+            WHERE username = ? AND \
+            amigo = ?";
+        db.query(
+            queryStringEliminacion,
+            [username2, username1],
+            (err: QueryError | null) => {
+                if (err) {
+                    console.log(err);
+                    resolve(false);
+                    reject(err);
+                } else {
+                    resolve(true);
+                }
+            }
+        );
     });
 }
