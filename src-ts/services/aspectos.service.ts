@@ -12,15 +12,35 @@ export async function getAspectosCartas(username: string): Promise<Aspecto[]> {
     return new Promise((resolve, reject) => {
         const db = createConnection(dbConfig as ConnectionOptions);
         const aspectos: Aspecto[] = [];
+        // Obtener el aspecto en uso
+        const queryStringUso =
+            "SELECT u.aspecto_en_uso AS elegido \
+                                    FROM usuarios AS u \
+                                    WHERE u.username = ? \
+                                    ";
+        let aspecto_uso = "";
+        db.query(
+            queryStringUso,
+            username,
+            (err: QueryError | null, rows: RowDataPacket[]) => {
+                if (err) {
+                    console.log(err);
+                    reject(err);
+                } else {
+                    aspecto_uso = rows[0].elegido;
+                }
+            }
+        );
+
         // Definir query
-        const queryString =
+        const queryStringTotal =
             "SELECT a.nombre, a.ruta, a.puntos_desbloqueo, (u.puntos>=a.puntos_desbloqueo) AS desbloqueado \
                                     FROM aspectos AS a, usuarios AS u \
                                     WHERE u.username = ? \
                                     ";
 
         db.query(
-            queryString,
+            queryStringTotal,
             username,
             (err: QueryError | null, rows: RowDataPacket[]) => {
                 if (err) {
@@ -30,6 +50,7 @@ export async function getAspectosCartas(username: string): Promise<Aspecto[]> {
                     const aspectos = rows.map((row: RowDataPacket) => ({
                         ...row,
                         desbloqueado: row.desbloqueado === 1 ? true : false,
+                        enUso: row.nombre === aspecto_uso,
                     })) as Aspecto[];
                     resolve(aspectos);
                 }
