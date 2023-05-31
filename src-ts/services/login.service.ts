@@ -1,11 +1,5 @@
-import {
-    QueryError,
-    createConnection,
-    RowDataPacket,
-    ConnectionOptions,
-} from "mysql2";
+import { QueryError, RowDataPacket } from "mysql2";
 import bcrypt = require("bcryptjs");
-import dbConfig = require("../configs/db.config");
 import { Connection } from "mysql2/promise";
 import { obtenerDb } from "./db.service";
 
@@ -44,8 +38,8 @@ export async function comprobarContrasena(
 }
 
 export async function obtenerCorreo(username: string): Promise<string> {
+    const db: Connection = await obtenerDb();
     return new Promise((resolve, reject) => {
-        const db = createConnection(dbConfig as ConnectionOptions);
         // Definir query
         const queryString =
             "SELECT \
@@ -53,22 +47,19 @@ export async function obtenerCorreo(username: string): Promise<string> {
             FROM usuarios AS u \
             WHERE u.username = ?";
 
-        db.query(
-            queryString,
-            [username],
-            async (err: QueryError | null, rows: RowDataPacket[]) => {
-                if (err) {
-                    console.log(err);
-                    reject(err);
+        db.query<RowDataPacket[]>(queryString, [username])
+            .then(async ([rows]) => {
+                if (rows.length > 0) {
+                    const email: string = rows[0].email;
+                    resolve(email);
                 } else {
-                    if (rows.length > 0) {
-                        const email: string = rows[0].email;
-                        resolve(email);
-                    } else {
-                        reject(err);
-                    }
+                    reject();
                 }
-            }
-        );
+            })
+            .catch((err: QueryError) => {
+                console.log(err);
+                // resolve(false)
+                reject(err);
+            });
     });
 }

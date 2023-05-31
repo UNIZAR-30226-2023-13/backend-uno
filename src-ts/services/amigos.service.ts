@@ -5,12 +5,14 @@ import {
     createConnection,
     RowDataPacket,
     ConnectionOptions,
-} from "mysql2";
+    Connection,
+} from "mysql2/promise";
 import dbConfig = require("../configs/db.config");
+import { obtenerDb } from "./db.service";
 
-export function getAmigos(username: string): Promise<Persona[]> {
+export async function getAmigos(username: string): Promise<Persona[]> {
+    const db: Connection = await obtenerDb();
     return new Promise((resolve, reject) => {
-        const db = createConnection(dbConfig as ConnectionOptions);
         const amigos: Persona[] = [];
         // Definir query
         const queryString =
@@ -24,27 +26,23 @@ export function getAmigos(username: string): Promise<Persona[]> {
                                     FROM usuarios AS u, amigos AS a\
                                     WHERE a.amigo = ? and a.username=u.username";
 
-        db.query(
-            queryString,
-            [username, username],
-            (err: QueryError | null, rows: RowDataPacket[]) => {
-                if (err) {
-                    console.log(err);
-                    reject(err);
-                } else {
-                    const amigos = rows as Persona[];
-                    resolve(amigos);
-                }
-            }
-        );
-
+        db.query<RowDataPacket[]>(queryString, [username, username])
+            .then(async ([rows]) => {
+                const amigos = rows as Persona[];
+                resolve(amigos);
+            })
+            .catch((err) => {
+                console.log(err);
+                // resolve(false)
+                reject(err);
+            });
         return amigos;
     });
 }
 
-export function getInvitaciones(username: string): Promise<Persona[]> {
+export async function getInvitaciones(username: string): Promise<Persona[]> {
+    const db: Connection = await obtenerDb();
     return new Promise((resolve, reject) => {
-        const db = createConnection(dbConfig as ConnectionOptions);
         const amigos: Persona[] = [];
         // Definir query
         const queryString =
@@ -54,59 +52,50 @@ export function getInvitaciones(username: string): Promise<Persona[]> {
                                     WHERE s.amigo = ? and s.username=u.username \
                                     ";
 
-        db.query(
-            queryString,
-            [username],
-            (err: QueryError | null, rows: RowDataPacket[]) => {
-                if (err) {
-                    console.log(err);
-                    reject(err);
-                } else {
-                    const solicitudes = rows as Persona[];
-                    resolve(solicitudes);
-                }
-            }
-        );
+        db.query<RowDataPacket[]>(queryString, [username])
+            .then(async ([rows]) => {
+                const solicitudes = rows as Persona[];
+                resolve(solicitudes);
+            })
+            .catch((err) => {
+                console.log(err);
+                // resolve(false)
+                reject(err);
+            });
 
         return amigos;
     });
 }
 
-export function enviarInvitacion(
+export async function enviarInvitacion(
     username1: string,
     username2: string
 ): Promise<boolean> {
+    const db: Connection = await obtenerDb();
     return new Promise((resolve, reject) => {
-        const db = createConnection(dbConfig as ConnectionOptions);
-
         // Definir query para comprobar si eran amigos
         const queryString =
             "INSERT INTO solicitudes_amistad(username,amigo) \
                                     VALUES (?,?) \
                                     ";
-        db.query(
-            queryString,
-            [username1, username2],
-            (err: QueryError | null, rows: RowDataPacket[]) => {
-                if (err) {
-                    console.log(err);
-                    resolve(false);
-                    reject(err);
-                } else {
-                    resolve(true);
-                }
-            }
-        );
+        db.query<RowDataPacket[]>(queryString, [username1, username2])
+            .then(async () => {
+                resolve(true);
+            })
+            .catch((err) => {
+                console.log(err);
+                resolve(false);
+                reject(err);
+            });
     });
 }
 
-export function comprobarSiAmigos(
+export async function comprobarSiAmigos(
     username1: string,
     username2: string
 ): Promise<boolean> {
+    const db: Connection = await obtenerDb();
     return new Promise((resolve, reject) => {
-        const db = createConnection(dbConfig as ConnectionOptions);
-
         // Definir query para comprobar si eran amigos
         const queryString =
             "SELECT \
@@ -115,70 +104,69 @@ export function comprobarSiAmigos(
                                     WHERE (a.username = ? and a.amigo=?) \
                                             or (a.amigo=? and a.username = ?)\
                                     ";
-        db.query(
-            queryString,
-            [username1, username2, username1, username2],
-            (err: QueryError | null, rows: RowDataPacket[]) => {
-                if (err) {
-                    console.log(err);
-                    reject(err);
+        db.query<RowDataPacket[]>(queryString, [
+            username1,
+            username2,
+            username1,
+            username2,
+        ])
+            .then(async ([rows]) => {
+                if (rows.length > 0) {
+                    resolve(true);
                 } else {
-                    if (rows.length > 0) {
-                        resolve(true);
-                    } else {
-                        resolve(false);
-                    }
+                    resolve(false);
                 }
-            }
-        );
+            })
+            .catch((err) => {
+                console.log(err);
+                resolve(false);
+                reject(err);
+            });
     });
 }
 
-export function anadirAmigos(
+export async function anadirAmigos(
     username1: string,
     username2: string
 ): Promise<boolean> {
+    const db: Connection = await obtenerDb();
     return new Promise((resolve, reject) => {
-        const db = createConnection(dbConfig as ConnectionOptions);
-
         // Definir query para comprobar si eran amigos
         const queryString =
             "INSERT INTO amigos(username,amigo) \
                                     VALUES (?,?) \
                                     ";
-        db.query(
-            queryString,
-            [username1, username2],
-            (err: QueryError | null) => {
-                if (err) {
-                    console.log(err);
-                    resolve(false);
-                    reject(err);
-                } else {
-                    resolve(true);
-                }
-            }
-        );
+        db.query<RowDataPacket[]>(queryString, [username1, username2])
+            .then(async () => {
+                resolve(true);
+            })
+            .catch((err) => {
+                console.log(err);
+                resolve(false);
+                reject(err);
+            });
+    });
+}
 
-        // Eliminar la invitacion
-
+export async function eliminarInvitacion(
+    username1: string,
+    username2: string
+): Promise<boolean> {
+    const db: Connection = await obtenerDb();
+    return new Promise((resolve, reject) => {
         // Definir query para comprobar si eran amigos
-        const queryStringEliminacion =
+        const queryString =
             "DELETE FROM solicitudes_amistad \
             WHERE username = ? AND \
             amigo = ?";
-        db.query(
-            queryStringEliminacion,
-            [username2, username1],
-            (err: QueryError | null) => {
-                if (err) {
-                    console.log(err);
-                    resolve(false);
-                    reject(err);
-                } else {
-                    resolve(true);
-                }
-            }
-        );
+        db.query<RowDataPacket[]>(queryString, [username1, username2])
+            .then(async () => {
+                resolve(true);
+            })
+            .catch((err) => {
+                console.log(err);
+                resolve(false);
+                reject(err);
+            });
     });
 }

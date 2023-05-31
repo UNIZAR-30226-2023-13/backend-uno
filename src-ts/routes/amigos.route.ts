@@ -3,10 +3,12 @@ import express, { Request, Response, Router } from "express";
 import {
     anadirAmigos,
     comprobarSiAmigos,
+    eliminarInvitacion,
     enviarInvitacion,
     getAmigos,
     getInvitaciones,
 } from "../services/amigos.service";
+import { jugadoresConectados } from "../services/usuariosConectados.service";
 
 const amigosRouter: Router = express.Router();
 
@@ -22,7 +24,12 @@ amigosRouter.get("/", async (req: Request, res: Response) => {
         res.status(200);
         // Obtener array de amigos
         const amigos: Persona[] = await getAmigos(username);
-        res.json(amigos);
+        const usuariosConectados: string[] = jugadoresConectados();
+        const amigosConEstado = amigos.map((amigo: Persona) => ({
+            ...amigo,
+            conectado: usuariosConectados.includes(amigo.username),
+        }));
+        res.json(amigosConEstado);
     }
     // Si pide informacion sobre otro usuario
     else {
@@ -86,6 +93,28 @@ amigosRouter.post("/enviar_invitacion", async (req: Request, res: Response) => {
     }
 });
 
+amigosRouter.post(
+    "/eliminar_invitacion",
+    async (req: Request, res: Response) => {
+        const username1: string = req.session.username
+            ? req.session.username
+            : "";
+        const username2: string = req.body.username;
+
+        const invitacionEliminada: boolean = await eliminarInvitacion(
+            username2,
+            username1
+        );
+        if (invitacionEliminada) {
+            res.status(200);
+            res.send("Invitacion eliminada");
+        } else {
+            res.status(200);
+            res.send("No se ha podido eliminar la invitacion");
+        }
+    }
+);
+
 amigosRouter.post("/anadir_amigo", async (req: Request, res: Response) => {
     const username1: string = req.session.username ? req.session.username : "";
     const username2: string = req.body.username;
@@ -107,8 +136,19 @@ amigosRouter.post("/anadir_amigo", async (req: Request, res: Response) => {
             const anadidos: boolean = await anadirAmigos(username1, username2);
             // Si se han podido añadir
             if (anadidos) {
-                res.status(200);
-                res.send("Añadidos correctamente");
+                const invitacionEliminada: boolean = await eliminarInvitacion(
+                    username2,
+                    username1
+                );
+                if (invitacionEliminada) {
+                    res.status(200);
+                    res.send("Añadidos correctamente");
+                } else {
+                    res.status(200);
+                    res.send(
+                        "Añadidos pero no se ha podido eliminar la invitacion"
+                    );
+                }
             } else {
                 res.status(500);
                 res.send("No se ha podido añadir como amigos");
