@@ -13,6 +13,7 @@ test("mezclarMazoCentral", () => {
     const tableroMezclado = new Tablero();
     tableroMezclado.mezclarBarajaCentral();
     expect(tableroSinMezclar).not.toEqual(tableroMezclado);
+    console.log(tableroMezclado);
 });
 
 test("repartirCartas", () => {

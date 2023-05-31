@@ -12,3 +12,7 @@ export function jugadoresConectados(): string[] {
     const jugadores = Array.from(jugadoresSocket.values());
     return jugadores;
 }
+
+export function obtenerUsernameSocket(socketID: string) {
+    return jugadoresSocket.get(socketID);
+}

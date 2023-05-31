@@ -1,5 +1,9 @@
 import express, { Request, Response, Router } from "express";
-import { comprobarContrasena, obtenerCorreo } from "../services/login.service";
+import {
+    comprobarContrasena,
+    obtenerCorreoPuntos,
+} from "../services/login.service";
+import { Persona } from "../models/persona";
 const loginRouter: Router = express.Router();
 
 loginRouter.post("/", async (req: Request, res: Response) => {
@@ -32,9 +36,13 @@ loginRouter.get("/quien-soy", async (req: Request, res: Response) => {
     let username = "";
     if (req.session.username) {
         username = req.session.username;
-        const email: string = await obtenerCorreo(username);
+        const personaCompleta: { persona: Persona; correo: string } =
+            await obtenerCorreoPuntos(username);
         res.status(200);
-        res.json({ username, email });
+        res.json({
+            ...personaCompleta.persona,
+            correo: personaCompleta.correo,
+        });
     } else {
         res.status(401);
         res.send();

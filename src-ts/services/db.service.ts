@@ -9,7 +9,7 @@ let db: Connection | null = null;
 export async function obtenerDb(): Promise<Connection> {
     if (!db) {
         db = await mysql.createConnection(dbConfig as ConnectionOptions);
-        console.log("abro la bd");
+        console.log("Abro conexión con la base de datos");
     }
     if (db) {
         return db;

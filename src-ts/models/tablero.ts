@@ -9,6 +9,7 @@ export class Tablero {
     jugadores: Jugador[] = [];
     ganador: Jugador | null = null;
     finalizado = false;
+    empezada = false;
 
     sentidoHorario = true;
     turno = 0;
@@ -85,6 +86,12 @@ export class Tablero {
         }
     }
 
+    comenzarPartida() {
+        this.empezada = true;
+        this.mezclarBarajaCentral(true);
+        this.repartirCartasIniciales();
+    }
+
     numeroJugadores(): number {
         return this.jugadores.length;
     }
@@ -107,7 +114,7 @@ export class Tablero {
         return this.jugadores[indJugador];
     }
 
-    mezclarBarajaCentral(): void {
+    mezclarBarajaCentral(primeraVez = false): void {
         let currentIndex: number = this.mazoCentral.length;
         let randomIndex: number;
 
@@ -125,9 +132,12 @@ export class Tablero {
         }
 
         // Eligo una carta como la carta mazo de descartes
-        const carta = this.mazoCentral.pop();
-        if (carta) {
-            this.mazoCentral.push(carta as Carta);
+        // Si es el barajeo inicial
+        if (primeraVez) {
+            const carta = this.mazoCentral.pop();
+            if (carta) {
+                this.mazoDescartes.push(carta as Carta);
+            }
         }
     }
 
@@ -193,7 +203,7 @@ export class Tablero {
         else {
             // Guardo la ultima mazo de descartes
             const ultimaCarta = this.mazoDescartes.pop();
-            this.mazoCentral = this.mazoDescartes;
+            this.mazoCentral = Array.from(this.mazoDescartes);
             if (ultimaCarta) {
                 this.mazoDescartes = [ultimaCarta];
             }

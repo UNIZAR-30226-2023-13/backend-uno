@@ -1,8 +1,8 @@
+import { Jugador } from "./../models/jugador";
 import { Tablero } from "../models/tablero";
-import { Jugador } from "../models/jugador";
+import { Persona } from "../models/persona";
 
 const partidas: Tablero[] = [];
-
 const partidaPorJugador: Map<string, Tablero> = new Map<string, Tablero>();
 
 function obtenerTableroNoCompleto(): Tablero {
@@ -19,32 +19,46 @@ function obtenerTableroNoCompleto(): Tablero {
         console.log("Creo una nueva partida");
         const nuevoTablero: Tablero = new Tablero();
         partidas.unshift(nuevoTablero);
+        console.log("Numero de partidas activas: " + partidas.length);
         return nuevoTablero;
     }
 }
 
 export function obtenerPartidaJugador(username: string): Tablero | null {
-    const indexPartida: number = partidas.findIndex((tablero) =>
-        tablero.jugadores.some((jugador) => {
-            return jugador.username === username;
-        })
-    );
-    if (indexPartida != -1) {
-        return partidas[indexPartida];
-    } else return null;
-}
-
-export function obtenerPartidaJugadorRapido(username: string): Tablero | null {
     return partidaPorJugador.get(username) || null;
 }
 
-export function anadirJugadorPartida(username: string) {
+// Si estan completos devuelve true, en caso contrario devuelve false
+export function anadirJugadorPartida(persona: Persona): boolean {
     const partida: Tablero = obtenerTableroNoCompleto();
     const jugador: Jugador = {
-        username: username,
-        puntos: 0,
+        ...persona,
         mano: [],
     };
     partida.anadirJugador(jugador);
-    partidaPorJugador.set(username, partida);
+    partidaPorJugador.set(persona.username, partida);
+
+    if (partida.numeroJugadores() === 4) {
+        return true;
+    }
+    return false;
+}
+
+export function eliminarJugadorPartida(username: string) {
+    const partida: Tablero | undefined = partidaPorJugador.get(username);
+    if (partida) {
+        const indexJugador: number = partida.jugadores.findIndex(
+            (jugador: Jugador) => jugador.username === username
+        );
+        const jugador: Jugador = partida.jugadores[indexJugador];
+        partida.eliminarJugador(jugador);
+    }
+    // Si no hay mas jugadores en la partida la eliminamos
+    if (partida?.numeroJugadores() === 0) {
+        const indexPartida = partidas.indexOf(partida);
+        if (indexPartida > -1) {
+            partidas.splice(indexPartida, 1);
+        }
+    }
+    console.log("Numero de partidas activas: " + partidas.length);
 }

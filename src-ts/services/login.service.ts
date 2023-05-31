@@ -1,3 +1,4 @@
+import { Persona } from "./../models/persona";
 import bcrypt = require("bcryptjs");
 import { Connection, QueryError, RowDataPacket } from "mysql2/promise";
 import { obtenerDb } from "./db.service";
@@ -36,13 +37,15 @@ export async function comprobarContrasena(
     });
 }
 
-export async function obtenerCorreo(username: string): Promise<string> {
+export async function obtenerCorreoPuntos(
+    username: string
+): Promise<{ persona: Persona; correo: string }> {
     const db: Connection = await obtenerDb();
     return new Promise((resolve, reject) => {
         // Definir query
         const queryString =
             "SELECT \
-                u.email \
+                u.email, u.puntos \
             FROM usuarios AS u \
             WHERE u.username = ?";
 
@@ -50,7 +53,14 @@ export async function obtenerCorreo(username: string): Promise<string> {
             .then(async ([rows]) => {
                 if (rows.length > 0) {
                     const email: string = rows[0].email;
-                    resolve(email);
+                    const puntos: number = rows[0].puntos;
+                    resolve({
+                        persona: {
+                            username: username,
+                            puntos: puntos,
+                        },
+                        correo: email,
+                    });
                 } else {
                     reject();
                 }

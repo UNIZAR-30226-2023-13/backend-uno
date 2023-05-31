@@ -5,9 +5,10 @@ import {
 } from "../services/usuariosConectados.service";
 
 export function connectionHandler(socket: Socket) {
-    console.log("soy elhandler " + JSON.stringify(socket.id));
+    console.log("Conexion: " + socket.id);
 
     socket.on("registro", (username: string) => {
+        console.log("Registro: " + socket.id + " -> " + username);
         conectarJugador(username, socket.id);
     });
 
