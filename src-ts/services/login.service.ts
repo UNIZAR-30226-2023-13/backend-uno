@@ -1,6 +1,5 @@
-import { QueryError, RowDataPacket } from "mysql2";
 import bcrypt = require("bcryptjs");
-import { Connection } from "mysql2/promise";
+import { Connection, QueryError, RowDataPacket } from "mysql2/promise";
 import { obtenerDb } from "./db.service";
 
 export async function comprobarContrasena(
@@ -29,7 +28,7 @@ export async function comprobarContrasena(
                     resolve(false);
                 }
             })
-            .catch((err) => {
+            .catch((err: QueryError) => {
                 console.log(err);
                 // resolve(false)
                 reject(err);

@@ -1,13 +1,5 @@
 import { Persona } from "./../models/persona";
-//import {db} from "./db.service";
-import {
-    QueryError,
-    createConnection,
-    RowDataPacket,
-    ConnectionOptions,
-    Connection,
-} from "mysql2/promise";
-import dbConfig = require("../configs/db.config");
+import { QueryError, RowDataPacket, Connection } from "mysql2/promise";
 import { obtenerDb } from "./db.service";
 
 export async function getAmigos(username: string): Promise<Persona[]> {
@@ -31,7 +23,7 @@ export async function getAmigos(username: string): Promise<Persona[]> {
                 const amigos = rows as Persona[];
                 resolve(amigos);
             })
-            .catch((err) => {
+            .catch((err: QueryError) => {
                 console.log(err);
                 // resolve(false)
                 reject(err);
@@ -57,7 +49,7 @@ export async function getInvitaciones(username: string): Promise<Persona[]> {
                 const solicitudes = rows as Persona[];
                 resolve(solicitudes);
             })
-            .catch((err) => {
+            .catch((err: QueryError) => {
                 console.log(err);
                 // resolve(false)
                 reject(err);
@@ -82,7 +74,7 @@ export async function enviarInvitacion(
             .then(async () => {
                 resolve(true);
             })
-            .catch((err) => {
+            .catch((err: QueryError) => {
                 console.log(err);
                 resolve(false);
                 reject(err);
@@ -117,7 +109,7 @@ export async function comprobarSiAmigos(
                     resolve(false);
                 }
             })
-            .catch((err) => {
+            .catch((err: QueryError) => {
                 console.log(err);
                 resolve(false);
                 reject(err);
@@ -140,7 +132,7 @@ export async function anadirAmigos(
             .then(async () => {
                 resolve(true);
             })
-            .catch((err) => {
+            .catch((err: QueryError) => {
                 console.log(err);
                 resolve(false);
                 reject(err);
@@ -163,7 +155,7 @@ export async function eliminarInvitacion(
             .then(async () => {
                 resolve(true);
             })
-            .catch((err) => {
+            .catch((err: QueryError) => {
                 console.log(err);
                 resolve(false);
                 reject(err);

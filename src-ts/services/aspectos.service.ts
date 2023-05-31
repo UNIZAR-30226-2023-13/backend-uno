@@ -1,16 +1,10 @@
 import { Aspecto } from "../models/aspecto";
-//import { db } from "./db.service";
-import {
-    QueryError,
-    createConnection,
-    RowDataPacket,
-    ConnectionOptions,
-} from "mysql2";
-import dbConfig = require("../configs/db.config");
+import { Connection, QueryError, RowDataPacket } from "mysql2/promise";
+import { obtenerDb } from "./db.service";
 
 export async function getAspectosCartas(username: string): Promise<Aspecto[]> {
+    const db: Connection = await obtenerDb();
     return new Promise((resolve, reject) => {
-        const db = createConnection(dbConfig as ConnectionOptions);
         const aspectos: Aspecto[] = [];
         // Obtener el aspecto en uso
         const queryStringUso =
@@ -19,18 +13,14 @@ export async function getAspectosCartas(username: string): Promise<Aspecto[]> {
                                     WHERE u.username = ? \
                                     ";
         let aspecto_uso = "";
-        db.query(
-            queryStringUso,
-            username,
-            (err: QueryError | null, rows: RowDataPacket[]) => {
-                if (err) {
-                    console.log(err);
-                    reject(err);
-                } else {
-                    aspecto_uso = rows[0].elegido;
-                }
-            }
-        );
+        db.query<RowDataPacket[]>(queryStringUso, username)
+            .then(async ([rows]) => {
+                aspecto_uso = rows[0].elegido;
+            })
+            .catch((err: QueryError) => {
+                console.log(err);
+                reject(err);
+            });
 
         // Definir query
         const queryStringTotal =
@@ -39,23 +29,20 @@ export async function getAspectosCartas(username: string): Promise<Aspecto[]> {
                                     WHERE u.username = ? \
                                     ";
 
-        db.query(
-            queryStringTotal,
-            username,
-            (err: QueryError | null, rows: RowDataPacket[]) => {
-                if (err) {
-                    console.log(err);
-                    reject(err);
-                } else {
-                    const aspectos = rows.map((row: RowDataPacket) => ({
-                        ...row,
-                        desbloqueado: row.desbloqueado === 1 ? true : false,
-                        enUso: row.nombre === aspecto_uso,
-                    })) as Aspecto[];
-                    resolve(aspectos);
-                }
-            }
-        );
+        db.query<RowDataPacket[]>(queryStringTotal, username)
+            .then(async ([rows]) => {
+                const aspectos = rows.map((row: RowDataPacket) => ({
+                    ...row,
+                    desbloqueado: row.desbloqueado === 1 ? true : false,
+                    enUso: row.nombre === aspecto_uso,
+                })) as Aspecto[];
+                resolve(aspectos);
+            })
+            .catch((err: QueryError) => {
+                console.log(err);
+                // resolve(false)
+                reject(err);
+            });
 
         return aspectos;
     });
@@ -64,8 +51,8 @@ export async function getAspectosCartas(username: string): Promise<Aspecto[]> {
 export async function getAspectosCartasDesbloqueados(
     username: string
 ): Promise<Aspecto[]> {
+    const db: Connection = await obtenerDb();
     return new Promise((resolve, reject) => {
-        const db = createConnection(dbConfig as ConnectionOptions);
         const aspectos: Aspecto[] = [];
         // Definir query
         const queryString =
@@ -74,19 +61,16 @@ export async function getAspectosCartasDesbloqueados(
                                     WHERE u.username = ? and u.puntos>=a.puntos_desbloqueo\
                                     ";
 
-        db.query(
-            queryString,
-            username,
-            (err: QueryError | null, rows: RowDataPacket[]) => {
-                if (err) {
-                    console.log(err);
-                    reject(err);
-                } else {
-                    const aspectos = rows as Aspecto[];
-                    resolve(aspectos);
-                }
-            }
-        );
+        db.query<RowDataPacket[]>(queryString, username)
+            .then(async ([rows]) => {
+                const aspectos = rows as Aspecto[];
+                resolve(aspectos);
+            })
+            .catch((err: QueryError) => {
+                console.log(err);
+                // resolve(false)
+                reject(err);
+            });
 
         return aspectos;
     });
@@ -98,8 +82,8 @@ export async function cambiarAspectoCartas(
 ): Promise<boolean> {
     const aspectosDesbloqueados: Aspecto[] =
         await getAspectosCartasDesbloqueados(username);
+    const db: Connection = await obtenerDb();
     return new Promise((resolve, reject) => {
-        const db = createConnection(dbConfig as ConnectionOptions);
         // Definir query
         const queryString =
             "UPDATE usuarios \
@@ -112,18 +96,15 @@ export async function cambiarAspectoCartas(
         ).length;
         // Si lo tiene desbloqueado
         if (numTableros > 0) {
-            db.query(
-                queryString,
-                [nuevoTablero, username],
-                (err: QueryError | null, rows: RowDataPacket[]) => {
-                    if (err) {
-                        console.log(err);
-                        reject(err);
-                    } else {
-                        resolve(true);
-                    }
-                }
-            );
+            db.query<RowDataPacket[]>(queryString, [nuevoTablero, username])
+                .then(async () => {
+                    resolve(true);
+                })
+                .catch((err: QueryError) => {
+                    console.log(err);
+                    // resolve(false)
+                    reject(err);
+                });
         }
         // Si no lo tiene desbloqueado
         else {
@@ -135,8 +116,8 @@ export async function cambiarAspectoCartas(
 export async function getAspectosTableros(
     username: string
 ): Promise<Aspecto[]> {
+    const db: Connection = await obtenerDb();
     return new Promise((resolve, reject) => {
-        const db = createConnection(dbConfig as ConnectionOptions);
         const aspectos: Aspecto[] = [];
         // Obtener el tablero en uso
         const queryStringUso =
@@ -146,18 +127,15 @@ export async function getAspectosTableros(
                                     ";
 
         let tablero_uso = "";
-        db.query(
-            queryStringUso,
-            username,
-            (err: QueryError | null, rows: RowDataPacket[]) => {
-                if (err) {
-                    console.log(err);
-                    reject(err);
-                } else {
-                    tablero_uso = rows[0].elegido;
-                }
-            }
-        );
+        db.query<RowDataPacket[]>(queryStringUso, username)
+            .then(async ([rows]) => {
+                tablero_uso = rows[0].elegido;
+            })
+            .catch((err: QueryError) => {
+                console.log(err);
+                // resolve(false)
+                reject(err);
+            });
 
         // Definir query
         const queryStringTotal =
@@ -166,23 +144,20 @@ export async function getAspectosTableros(
                                     WHERE u.username = ? \
                                     ";
 
-        db.query(
-            queryStringTotal,
-            username,
-            (err: QueryError | null, rows: RowDataPacket[]) => {
-                if (err) {
-                    console.log(err);
-                    reject(err);
-                } else {
-                    const aspectos = rows.map((row: RowDataPacket) => ({
-                        ...row,
-                        desbloqueado: row.desbloqueado === 1 ? true : false,
-                        enUso: row.nombre === tablero_uso,
-                    })) as Aspecto[];
-                    resolve(aspectos);
-                }
-            }
-        );
+        db.query<RowDataPacket[]>(queryStringTotal, username)
+            .then(async ([rows]) => {
+                const aspectos = rows.map((row: RowDataPacket) => ({
+                    ...row,
+                    desbloqueado: row.desbloqueado === 1 ? true : false,
+                    enUso: row.nombre === tablero_uso,
+                })) as Aspecto[];
+                resolve(aspectos);
+            })
+            .catch((err: QueryError) => {
+                console.log(err);
+                // resolve(false)
+                reject(err);
+            });
 
         return aspectos;
     });
@@ -191,8 +166,8 @@ export async function getAspectosTableros(
 export async function getAspectosTablerosDesbloqueados(
     username: string
 ): Promise<Aspecto[]> {
+    const db: Connection = await obtenerDb();
     return new Promise((resolve, reject) => {
-        const db = createConnection(dbConfig as ConnectionOptions);
         const aspectos: Aspecto[] = [];
         // Definir query
         const queryString =
@@ -201,19 +176,16 @@ export async function getAspectosTablerosDesbloqueados(
                                     WHERE u.username = ? and u.puntos>=t.puntos_desbloqueo\
                                     ";
 
-        db.query(
-            queryString,
-            username,
-            (err: QueryError | null, rows: RowDataPacket[]) => {
-                if (err) {
-                    console.log(err);
-                    reject(err);
-                } else {
-                    const aspectos = rows as Aspecto[];
-                    resolve(aspectos);
-                }
-            }
-        );
+        db.query<RowDataPacket[]>(queryString, username)
+            .then(async ([rows]) => {
+                const aspectos = rows as Aspecto[];
+                resolve(aspectos);
+            })
+            .catch((err: QueryError) => {
+                console.log(err);
+                // resolve(false)
+                reject(err);
+            });
 
         return aspectos;
     });
@@ -225,8 +197,8 @@ export async function cambiarTablero(
 ): Promise<boolean> {
     const tablerosDesbloqueados: Aspecto[] =
         await getAspectosTablerosDesbloqueados(username);
+    const db: Connection = await obtenerDb();
     return new Promise((resolve, reject) => {
-        const db = createConnection(dbConfig as ConnectionOptions);
         // Definir query
         const queryString =
             "UPDATE usuarios \
@@ -239,18 +211,15 @@ export async function cambiarTablero(
         ).length;
         // Si lo tiene desbloqueado
         if (numTableros > 0) {
-            db.query(
-                queryString,
-                [nuevoTablero, username],
-                (err: QueryError | null) => {
-                    if (err) {
-                        console.log(err);
-                        reject(err);
-                    } else {
-                        resolve(true);
-                    }
-                }
-            );
+            db.query<RowDataPacket[]>(queryString, [nuevoTablero, username])
+                .then(async () => {
+                    resolve(true);
+                })
+                .catch((err: QueryError) => {
+                    console.log(err);
+                    // resolve(false)
+                    reject(err);
+                });
         }
         // Si no lo tiene desbloqueado
         else {
