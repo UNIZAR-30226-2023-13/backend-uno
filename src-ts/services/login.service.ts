@@ -6,13 +6,15 @@ import {
 } from "mysql2";
 import bcrypt = require("bcryptjs");
 import dbConfig = require("../configs/db.config");
+import { Connection } from "mysql2/promise";
+import { obtenerDb } from "./db.service";
 
 export async function comprobarContrasena(
     username: string,
     contrasena: string
 ): Promise<boolean> {
+    const db: Connection = await obtenerDb();
     return new Promise((resolve, reject) => {
-        const db = createConnection(dbConfig as ConnectionOptions);
         // Definir query
         const queryString =
             "SELECT \
@@ -20,27 +22,24 @@ export async function comprobarContrasena(
             FROM usuarios AS u \
             WHERE u.username = ?";
 
-        db.query(
-            queryString,
-            [username],
-            async (err: QueryError | null, rows: RowDataPacket[]) => {
-                if (err) {
-                    console.log(err);
-                    reject(err);
+        db.query<RowDataPacket[]>(queryString, [username])
+            .then(async ([rows]) => {
+                if (rows.length > 0) {
+                    const contraseñaHasheada: string = rows[0].password;
+                    const iguales: boolean = await bcrypt.compare(
+                        contrasena,
+                        contraseñaHasheada
+                    );
+                    resolve(iguales);
                 } else {
-                    if (rows.length > 0) {
-                        const contraseñaHasheada: string = rows[0].password;
-                        const iguales: boolean = await bcrypt.compare(
-                            contrasena,
-                            contraseñaHasheada
-                        );
-                        resolve(iguales);
-                    } else {
-                        resolve(false);
-                    }
+                    resolve(false);
                 }
-            }
-        );
+            })
+            .catch((err) => {
+                console.log(err);
+                // resolve(false)
+                reject(err);
+            });
     });
 }
 
