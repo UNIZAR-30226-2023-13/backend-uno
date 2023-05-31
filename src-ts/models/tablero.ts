@@ -85,6 +85,10 @@ export class Tablero {
         }
     }
 
+    numeroJugadores(): number {
+        return this.jugadores.length;
+    }
+
     siguienteJugador(): Jugador {
         let indJugador: number;
         if (this.sentidoHorario) {
