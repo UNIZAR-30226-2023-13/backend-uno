@@ -3,6 +3,8 @@ import dotenv from "dotenv";
 import bodyParser from "body-parser";
 import cookieParser from "cookie-parser";
 import cookieSession from "cookie-session";
+import { Socket, Server as SocketIOServer } from "socket.io";
+import http = require("http");
 
 dotenv.config();
 
@@ -13,7 +15,11 @@ import cuentaRouter = require("./routes/cuenta.route");
 import aspectosRoute = require("./routes/aspectos.route");
 import auth = require("./middlewares/auth");
 import cors from "cors";
+
 const app: Express = express();
+const server = http.createServer(app);
+const io = new SocketIOServer(server);
+
 const port = process.env.PORT;
 
 declare module "express-session" {
@@ -53,6 +59,24 @@ app.get("/", auth as RequestHandler, (req: Request, res: Response) => {
     res.send("Express + TypeScript Server (is running)");
 });
 
-app.listen(port, () => {
+server.listen(port, () => {
     console.log(`⚡️[server]: Server is running at http://localhost:${port}`);
+});
+
+import { mensajeHandler } from "./socket/message.socket";
+import { connectionHandler } from "./socket/connectionHandler";
+import { desconnectionHandler } from "./socket/desconnectionHandler";
+import { partidaHandler } from "./socket/partidaHandler";
+
+io.on("connection", (socket) => {
+    // Handler de la conexion
+    connectionHandler(socket);
+
+    // Handler de la desconexion
+    desconnectionHandler(socket);
+
+    // Handler para una partida
+    partidaHandler(socket);
+
+    mensajeHandler(io, socket);
 });
