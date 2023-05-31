@@ -63,12 +63,12 @@ server.listen(port, () => {
     console.log(`⚡️[server]: Server is running at http://localhost:${port}`);
 });
 
-import { mensajeHandler } from "./socket/message.socket";
-import { connectionHandler } from "./socket/connectionHandler";
-import { desconnectionHandler } from "./socket/desconnectionHandler";
-import { partidaHandler } from "./socket/partidaHandler";
+import { mensajeHandler } from "./handlers/message.socket";
+import { connectionHandler } from "./handlers/connectionHandler";
+import { desconnectionHandler } from "./handlers/desconnectionHandler";
+import { partidaHandler } from "./handlers/partidaHandler";
 
-io.on("connection", (socket) => {
+io.on("connection", (socket: Socket) => {
     // Handler de la conexion
     connectionHandler(socket);
 
