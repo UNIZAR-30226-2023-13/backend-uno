@@ -54,6 +54,18 @@ cuentaRouter.post("/eliminar", async (req: Request, res: Response) => {
     }
 });
 
+cuentaRouter.post("/cerrar-sesion", async (req: Request, res: Response) => {
+    if (req.session.username && req.session.loggeado) {
+        req.session.loggeado = false;
+        req.session = null as never;
+        res.status(200);
+        res.send();
+    } else {
+        res.status(401);
+        res.send();
+    }
+});
+
 cuentaRouter.get("/quien-soy", async (req: Request, res: Response) => {
     let username = "";
     if (req.session.username) {

@@ -32,21 +32,4 @@ loginRouter.post("/", async (req: Request, res: Response) => {
     }
 });
 
-loginRouter.get("/quien-soy", async (req: Request, res: Response) => {
-    let username = "";
-    if (req.session.username) {
-        username = req.session.username;
-        const personaCompleta: { persona: Persona; correo: string } =
-            await obtenerCorreoPuntos(username);
-        res.status(200);
-        res.json({
-            ...personaCompleta.persona,
-            correo: personaCompleta.correo,
-        });
-    } else {
-        res.status(401);
-        res.send();
-    }
-});
-
 module.exports = loginRouter;
