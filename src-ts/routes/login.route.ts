@@ -16,7 +16,7 @@ loginRouter.post("/", async (req: Request, res: Response) => {
         res.send("Ok, ya estabas login");
     }
     // Buscamos en la BD si existe un usuario con ese nombre y contraseña
-    else {
+    else if (username!=undefined && password!=undefined){
         const iguales = await comprobarContrasena(username, password);
         if (iguales) {
             req.session.loggeado = true;
@@ -29,6 +29,10 @@ loginRouter.post("/", async (req: Request, res: Response) => {
             res.status(401);
             res.send("Usuario y contraseña incorrectos");
         }
+    }
+    else {
+        res.status(403);
+        res.send("No ha mandado cookie ni parametros");
     }
 });
 
