@@ -9,7 +9,7 @@ export function connectionHandler(socket: Socket) {
 
     socket.on("registro", (username: string) => {
         console.log("Registro: " + socket.id + " -> " + username);
-        conectarJugador(username, socket.id);
+        conectarJugador(username, socket);
     });
 
     socket.on("obtenerUsuarios", () => {

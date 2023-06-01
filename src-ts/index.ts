@@ -77,7 +77,7 @@ io.on("connection", (socket: Socket) => {
     desconnectionHandler(socket);
 
     // Handler para una partida
-    partidaHandler(socket);
+    partidaHandler(io, socket);
 
     mensajeHandler(io, socket);
 });
