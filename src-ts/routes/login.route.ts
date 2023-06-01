@@ -1,9 +1,5 @@
 import express, { Request, Response, Router } from "express";
-import {
-    comprobarContrasena,
-    obtenerCorreoPuntos,
-} from "../services/login.service";
-import { Persona } from "../models/persona";
+import { comprobarContrasena } from "../services/login.service";
 const loginRouter: Router = express.Router();
 
 loginRouter.post("/", async (req: Request, res: Response) => {
