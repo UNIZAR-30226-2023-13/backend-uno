@@ -33,6 +33,30 @@ export async function cambiarEmailPassword(
     });
 }
 
+export async function cambiarEmail(
+    username: string,
+    email: string
+): Promise<boolean> {
+    const db: Connection = await obtenerDb();
+    return new Promise((resolve, reject) => {
+        // Definir query
+        const queryString =
+            "UPDATE usuarios \
+            SET email=? \
+            WHERE username=?";
+
+        db.query<RowDataPacket[]>(queryString, [email, username])
+            .then(async () => {
+                resolve(true);
+            })
+            .catch((err: QueryError) => {
+                console.log(err);
+                resolve(false);
+                reject(err);
+            });
+    });
+}
+
 export async function eliminarCuenta(
     username: string,
     contrasena: string
