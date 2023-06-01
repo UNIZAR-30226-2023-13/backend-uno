@@ -26,6 +26,7 @@ declare module "express-session" {
     interface SessionData {
         username: string;
         loggeado: boolean;
+        nowInMinutes: number;
     }
 }
 
@@ -49,7 +50,7 @@ app.use("/login", loginRoute as RequestHandler);
 
 app.use("/signup", signUpRouter as RequestHandler);
 
-app.use("/cuenta", cuentaRouter as RequestHandler);
+app.use("/cuenta", auth as RequestHandler, cuentaRouter as RequestHandler);
 
 app.use("/amigos", auth as RequestHandler, amigosRoute as RequestHandler);
 
