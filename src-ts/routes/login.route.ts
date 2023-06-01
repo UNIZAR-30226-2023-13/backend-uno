@@ -1,9 +1,5 @@
 import express, { Request, Response, Router } from "express";
-import {
-    comprobarContrasena,
-    obtenerCorreoPuntos,
-} from "../services/login.service";
-import { Persona } from "../models/persona";
+import { comprobarContrasena } from "../services/login.service";
 const loginRouter: Router = express.Router();
 
 loginRouter.post("/", async (req: Request, res: Response) => {
@@ -33,23 +29,6 @@ loginRouter.post("/", async (req: Request, res: Response) => {
     else {
         res.status(403);
         res.send("No ha mandado cookie ni parametros");
-    }
-});
-
-loginRouter.get("/quien-soy", async (req: Request, res: Response) => {
-    let username = "";
-    if (req.session.username) {
-        username = req.session.username;
-        const personaCompleta: { persona: Persona; correo: string } =
-            await obtenerCorreoPuntos(username);
-        res.status(200);
-        res.json({
-            ...personaCompleta.persona,
-            correo: personaCompleta.correo,
-        });
-    } else {
-        res.status(401);
-        res.send();
     }
 });
 
