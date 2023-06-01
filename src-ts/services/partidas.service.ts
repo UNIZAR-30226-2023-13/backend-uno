@@ -8,7 +8,7 @@ const partidaPorJugador: Map<string, Tablero> = new Map<string, Tablero>();
 function obtenerTableroNoCompleto(): Tablero {
     // Busco una partida que no este completa
     const index: number = partidas.findIndex(
-        (tablero: Tablero) => tablero.numeroJugadores() < 4
+        (tablero: Tablero) => tablero.numeroJugadores() < 4 && !tablero.empezada
     );
     // Si existe
     if (index !== -1) {
@@ -39,6 +39,7 @@ export function anadirJugadorPartida(persona: Persona): boolean {
     partidaPorJugador.set(persona.username, partida);
 
     if (partida.numeroJugadores() === 4) {
+        partida.comenzarPartida();
         return true;
     }
     return false;
