@@ -90,6 +90,8 @@ export class Tablero {
         this.empezada = true;
         this.mezclarBarajaCentral(true);
         this.repartirCartasIniciales();
+        //console.log(this);
+        console.log(JSON.stringify(this, null, 2));
     }
 
     numeroJugadores(): number {
@@ -134,7 +136,17 @@ export class Tablero {
         // Eligo una carta como la carta mazo de descartes
         // Si es el barajeo inicial
         if (primeraVez) {
-            const carta = this.mazoCentral.pop();
+            let carta = this.mazoCentral.pop();
+            carta = {
+                accion: "cambio color",
+            };
+            // Mientras sea una carta de accion
+            while (carta && carta.accion) {
+                // La añadimos al fondo
+                this.mazoCentral.unshift(carta);
+                // Cogemos otra carta del mazo central
+                carta = this.mazoCentral.pop();
+            }
             if (carta) {
                 this.mazoDescartes.push(carta as Carta);
             }
