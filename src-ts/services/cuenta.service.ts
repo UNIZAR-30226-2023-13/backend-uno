@@ -57,6 +57,28 @@ export async function cambiarEmail(
     });
 }
 
+export async function existeCuenta(username: string): Promise<boolean> {
+    const db: Connection = await obtenerDb();
+    return new Promise((resolve, reject) => {
+        // Definir query
+        const queryString =
+            "SELECT username\
+            FROM usuarios \
+            WHERE username=?";
+
+        db.query<RowDataPacket[]>(queryString, [username])
+            .then(async ([rows]) => {
+                if (rows.length != 0) resolve(true);
+                else resolve(false);
+            })
+            .catch((err: QueryError) => {
+                console.log(err);
+                resolve(false);
+                reject(err);
+            });
+    });
+}
+
 export async function eliminarCuenta(
     username: string,
     contrasena: string

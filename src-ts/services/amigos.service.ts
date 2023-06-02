@@ -51,7 +51,6 @@ export async function getInvitaciones(username: string): Promise<Persona[]> {
             })
             .catch((err: QueryError) => {
                 console.log(err);
-                // resolve(false)
                 reject(err);
             });
 

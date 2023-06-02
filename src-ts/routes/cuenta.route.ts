@@ -5,7 +5,6 @@ import {
     eliminarCuenta,
 } from "../services/cuenta.service";
 import { obtenerCorreoPuntos } from "../services/login.service";
-import { Persona } from "../models/persona";
 
 const cuentaRouter: Router = express.Router();
 
@@ -94,13 +93,18 @@ cuentaRouter.get("/quien-soy", async (req: Request, res: Response) => {
     let username = "";
     if (req.session.username) {
         username = req.session.username;
-        const personaCompleta: { persona: Persona; correo: string } =
-            await obtenerCorreoPuntos(username);
-        res.status(200);
-        res.json({
-            ...personaCompleta.persona,
-            correo: personaCompleta.correo,
-        });
+        obtenerCorreoPuntos(username)
+            .then(({ persona, correo }) => {
+                res.status(200);
+                res.json({
+                    ...persona,
+                    correo: correo,
+                });
+            })
+            .catch(() => {
+                res.status(403);
+                res.send("La cuenta ya no existe");
+            });
     } else {
         res.status(401);
         res.send();
