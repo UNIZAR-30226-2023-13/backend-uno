@@ -7,6 +7,7 @@ import { obtenerCorreoPuntos } from "../services/login.service";
 import { Persona } from "../models/persona";
 import {
     anadirJugadorPartida,
+    eliminarJugadorPartida,
     obtenerPartidaJugador,
 } from "../services/partidas.service";
 import { nanoid } from "nanoid";
@@ -14,9 +15,13 @@ import { Tablero } from "../models/tablero";
 import { Jugador } from "../models/jugador";
 import { Carta } from "../models/carta";
 
-// Map del tipo: socket.id -> salaJuego
+// Map del tipo: socket -> salaJuego
 // donde una salaJuego es una room con varios jugadores
 const salasJuego: Map<Socket, string> = new Map<Socket, string>();
+
+export function obtenerSalaJuego(socket: Socket) {
+    return salasJuego.get(socket);
+}
 
 export function partidaHandler(io: SocketIOServer, socket: Socket) {
     socket.on("partida", () => {
@@ -94,6 +99,21 @@ export function partidaHandler(io: SocketIOServer, socket: Socket) {
                     partida.robarCarta(jugador);
                     io.to(idSala).emit("partida", partida);
                 }
+            }
+        }
+    });
+
+    socket.on("abandonarPartida", (mensaje, callback) => {
+        const idSala: string | undefined = salasJuego.get(socket);
+        const username: string | undefined = obtenerUsernameDeSocket(socket);
+        // Si esta registrado y tiene una salaDeJuego
+        if (username && idSala) {
+            const partida: Tablero | null = obtenerPartidaJugador(username);
+            // Si existe la partida
+            if (partida) {
+                eliminarJugadorPartida(username);
+                socket.to(idSala).emit("partida:abandono", username);
+                callback("Ok");
             }
         }
     });

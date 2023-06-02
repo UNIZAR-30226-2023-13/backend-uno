@@ -90,7 +90,6 @@ export class Tablero {
         this.empezada = true;
         this.mezclarBarajaCentral(true);
         this.repartirCartasIniciales();
-        //console.log(this);
         console.log(JSON.stringify(this, null, 2));
     }
 
@@ -189,19 +188,29 @@ export class Tablero {
     }
 
     eliminarJugador(jugadorAEliminar: Jugador): boolean {
-        if (!this.jugadores.includes(jugadorAEliminar)) {
+        const indiceJugador = this.jugadores.findIndex(
+            (jugador) => jugador.username === jugadorAEliminar.username
+        );
+
+        if (indiceJugador === -1) {
             return false;
         }
-        // Si el jugador si existe
-        else {
-            // Meto su mano en el mazo central
-            this.mazoCentral.push(...jugadorAEliminar.mano);
 
-            this.jugadores = this.jugadores.filter(
-                (j) => j.username !== jugadorAEliminar.username
-            );
-            return true;
+        if (indiceJugador < this.turno) {
+            this.turno--;
+        } else if (
+            indiceJugador === this.turno &&
+            this.turno === this.jugadores.length - 1
+        ) {
+            this.turno = 0;
         }
+
+        this.mazoCentral.push(...jugadorAEliminar.mano);
+        this.jugadores = this.jugadores.filter(
+            (jugador) => jugador.username !== jugadorAEliminar.username
+        );
+
+        return true;
     }
 
     obtenerJugador(username: string): Jugador | undefined {
