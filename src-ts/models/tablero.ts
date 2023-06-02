@@ -204,6 +204,10 @@ export class Tablero {
         }
     }
 
+    obtenerJugador(username: string): Jugador | undefined {
+        return this.jugadores.find((jugador) => jugador.username === username);
+    }
+
     robarCarta(jugador: Jugador): void {
         const cartaRobada = this.mazoCentral.pop();
         // Si habia cartas en el mazo central

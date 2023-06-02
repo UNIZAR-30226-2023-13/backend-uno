@@ -12,6 +12,7 @@ import {
 import { nanoid } from "nanoid";
 import { Tablero } from "../models/tablero";
 import { Jugador } from "../models/jugador";
+import { Carta } from "../models/carta";
 
 // Map del tipo: socket.id -> salaJuego
 // donde una salaJuego es una room con varios jugadores
@@ -57,8 +58,43 @@ export function partidaHandler(io: SocketIOServer, socket: Socket) {
 
     socket.on("jugarCarta", (mensaje) => {
         const idSala: string | undefined = salasJuego.get(socket);
-        if (idSala) {
-            socket.to(idSala).emit("partida", mensaje);
+        const username: string | undefined = obtenerUsernameDeSocket(socket);
+        // Si esta registrado y tiene una salaDeJuego
+        if (username && idSala) {
+            const partida: Tablero | null = obtenerPartidaJugador(username);
+            // Si existe la partida
+            if (partida) {
+                const jugador: Jugador | undefined =
+                    partida.obtenerJugador(username);
+                // Si pertenece a la partida
+                if (jugador) {
+                    const carta: Carta = mensaje;
+                    console.log(jugador);
+                    console.log(carta);
+                    partida.jugarCarta(carta, jugador);
+                    io.to(idSala).emit("partida", partida);
+                }
+            }
+        }
+    });
+
+    socket.on("robarCarta", () => {
+        const idSala: string | undefined = salasJuego.get(socket);
+        const username: string | undefined = obtenerUsernameDeSocket(socket);
+        // Si esta registrado y tiene una salaDeJuego
+        if (username && idSala) {
+            const partida: Tablero | null = obtenerPartidaJugador(username);
+            // Si existe la partida
+            if (partida) {
+                const jugador: Jugador | undefined =
+                    partida.obtenerJugador(username);
+                // Si pertenece a la partida
+                if (jugador) {
+                    console.log(jugador);
+                    partida.robarCarta(jugador);
+                    io.to(idSala).emit("partida", partida);
+                }
+            }
         }
     });
 }
