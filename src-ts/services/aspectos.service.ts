@@ -27,6 +27,7 @@ export async function getAspectosCartas(username: string): Promise<Aspecto[]> {
             "SELECT a.nombre, a.ruta, a.puntos_desbloqueo, (u.puntos>=a.puntos_desbloqueo) AS desbloqueado \
                                     FROM aspectos AS a, usuarios AS u \
                                     WHERE u.username = ? \
+                                    ORDER BY a.puntos_desbloqueo\
                                     ";
 
         db.query<RowDataPacket[]>(queryStringTotal, username)
