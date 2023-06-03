@@ -143,6 +143,7 @@ export async function getAspectosTableros(
             "SELECT t.nombre, t.ruta, t.puntos_desbloqueo, (u.puntos>=t.puntos_desbloqueo) AS desbloqueado \
                                     FROM tableros AS t, usuarios AS u \
                                     WHERE u.username = ? \
+                                    ORDER BY a.puntos_desbloqueo \
                                     ";
 
         db.query<RowDataPacket[]>(queryStringTotal, username)
