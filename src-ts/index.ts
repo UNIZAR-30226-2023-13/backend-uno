@@ -17,6 +17,13 @@ import auth = require("./middlewares/auth");
 import cors from "cors";
 
 const app: Express = express();
+app.use(
+    cors({
+        credentials: true,
+        origin: "http://localhost:3000",
+    })
+);
+
 const server = http.createServer(app);
 const io = new SocketIOServer(server);
 
@@ -29,13 +36,6 @@ declare module "express-session" {
         nowInMinutes: number;
     }
 }
-
-app.use(
-    cors({
-        credentials: true,
-        origin: "http://localhost:3000",
-    })
-);
 
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: true }));
