@@ -10,6 +10,7 @@ export class Tablero {
     ganador: Jugador | null = null;
     finalizado = false;
     empezada = false;
+    fecha: Date = new Date();
 
     sentidoHorario = true;
     turno = 0;
@@ -90,6 +91,7 @@ export class Tablero {
         this.empezada = true;
         this.mezclarBarajaCentral(true);
         this.repartirCartasIniciales();
+        this.fecha = new Date();
         console.log(JSON.stringify(this, null, 2));
     }
 
