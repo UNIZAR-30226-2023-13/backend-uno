@@ -3,6 +3,7 @@ import express, { Request, Response, Router } from "express";
 import {
     anadirAmigos,
     comprobarSiAmigos,
+    eliminarAmigos,
     eliminarInvitacion,
     enviarInvitacion,
     getAmigos,
@@ -87,7 +88,7 @@ amigosRouter.post("/enviar_invitacion", async (req: Request, res: Response) => {
                 res.send("Invitacion enviada correctamente");
             } else {
                 res.status(500);
-                res.send("No se ha podido enviar la invitacion");
+                res.send("El usuario no existe");
             }
         }
     }
@@ -152,6 +153,40 @@ amigosRouter.post("/anadir_amigo", async (req: Request, res: Response) => {
             } else {
                 res.status(500);
                 res.send("No se ha podido añadir como amigos");
+            }
+        }
+    }
+});
+
+amigosRouter.post("/eliminar_amigo", async (req: Request, res: Response) => {
+    const username1: string = req.session.username ? req.session.username : "";
+    const username2: string = req.body.username;
+
+    // Si se intenta añadir a si mismo como amigo
+    if (username1 === username2) {
+        res.status(400);
+        res.send("No te puedes eliminar a ti mismo como amigo");
+    } else {
+        const eranAmigos: boolean = await comprobarSiAmigos(
+            username1,
+            username2
+        );
+        // Si ya eran amigos
+        if (!eranAmigos) {
+            res.status(409);
+            res.send("No sois amigos");
+        } else {
+            const eliminados: boolean = await eliminarAmigos(
+                username1,
+                username2
+            );
+            // Si se han podido añadir
+            if (eliminados) {
+                res.status(200);
+                res.send("Amigo eliminado correctamente");
+            } else {
+                res.status(500);
+                res.send("No se ha podido eliminar como amigo");
             }
         }
     }

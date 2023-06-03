@@ -139,6 +139,35 @@ export async function anadirAmigos(
     });
 }
 
+export async function eliminarAmigos(
+    username1: string,
+    username2: string
+): Promise<boolean> {
+    const db: Connection = await obtenerDb();
+    return new Promise((resolve, reject) => {
+        // Definir query para comprobar si eran amigos
+        const queryString =
+            "DELETE FROM amigos \
+            WHERE (username=? AND amigo=?) \
+                OR (username=? AND amigo=?)";
+
+        db.query<RowDataPacket[]>(queryString, [
+            username1,
+            username2,
+            username2,
+            username1,
+        ])
+            .then(async () => {
+                resolve(true);
+            })
+            .catch((err: QueryError) => {
+                console.log(err);
+                resolve(false);
+                reject(err);
+            });
+    });
+}
+
 export async function eliminarInvitacion(
     username1: string,
     username2: string
