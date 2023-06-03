@@ -430,3 +430,45 @@ test("eliminarJugador3ConTurno1", () => {
     tablero.eliminarJugador(jugadores[3]);
     expect(tablero.jugadores[tablero.turno]).toEqual(jugadores[1]);
 });
+
+test("eliminarJugador3ConTurno3", () => {
+    const jugadores: Jugador[] = [
+        { username: "jugador 0", puntos: 0, mano: [] },
+        { username: "jugador 1", puntos: 0, mano: [] },
+        { username: "jugador 2", puntos: 0, mano: [] },
+        { username: "jugador 3", puntos: 0, mano: [] },
+    ];
+    const tablero: Tablero = new Tablero([], [], Array.from(jugadores), true);
+    tablero.pasarTurno();
+    tablero.pasarTurno();
+    tablero.pasarTurno();
+    tablero.eliminarJugador(jugadores[3]);
+    expect(tablero.jugadores[tablero.turno]).toEqual(jugadores[0]);
+});
+
+test("eliminarJugador3ConTurno3SentidoAntihorario", () => {
+    const jugadores: Jugador[] = [
+        { username: "jugador 0", puntos: 0, mano: [] },
+        { username: "jugador 1", puntos: 0, mano: [] },
+        { username: "jugador 2", puntos: 0, mano: [] },
+        { username: "jugador 3", puntos: 0, mano: [] },
+    ];
+    const tablero: Tablero = new Tablero([], [], Array.from(jugadores), false);
+    tablero.pasarTurno();
+    expect(tablero.jugadores[tablero.turno]).toEqual(jugadores[3]);
+    tablero.eliminarJugador(jugadores[3]);
+    expect(tablero.jugadores[tablero.turno]).toEqual(jugadores[2]);
+});
+
+test("eliminarJugador0ConTurno0SentidoAntihorario", () => {
+    const jugadores: Jugador[] = [
+        { username: "jugador 0", puntos: 0, mano: [] },
+        { username: "jugador 1", puntos: 0, mano: [] },
+        { username: "jugador 2", puntos: 0, mano: [] },
+        { username: "jugador 3", puntos: 0, mano: [] },
+    ];
+    const tablero: Tablero = new Tablero([], [], Array.from(jugadores), false);
+    expect(tablero.jugadores[tablero.turno]).toEqual(jugadores[0]);
+    tablero.eliminarJugador(jugadores[0]);
+    expect(tablero.jugadores[tablero.turno]).toEqual(jugadores[3]);
+});

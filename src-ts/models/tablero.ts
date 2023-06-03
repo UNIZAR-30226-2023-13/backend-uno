@@ -192,17 +192,28 @@ export class Tablero {
             (jugador) => jugador.username === jugadorAEliminar.username
         );
 
+        // Si el jugador no existe
         if (indiceJugador === -1) {
             return false;
         }
 
+        // Si el jugador es anterior al turno
         if (indiceJugador < this.turno) {
             this.turno--;
-        } else if (
+        }
+        // Si el jugador tiene el turno y esta en el borde final
+        else if (
             indiceJugador === this.turno &&
             this.turno === this.jugadores.length - 1
         ) {
-            this.turno = 0;
+            if (this.sentidoHorario) {
+                this.turno = 0;
+            } else this.turno = this.jugadores.length - 2;
+        } else if (indiceJugador === this.turno && !this.sentidoHorario) {
+            if (indiceJugador === 0) {
+                this.turno = this.jugadores.length - 1;
+            }
+            this.turno--;
         }
 
         this.mazoCentral.push(...jugadorAEliminar.mano);
