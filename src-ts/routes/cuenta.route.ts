@@ -82,7 +82,7 @@ cuentaRouter.post("/cerrar-sesion", async (req: Request, res: Response) => {
         req.session.loggeado = false;
         req.session = null as never;
         res.status(200);
-        res.send();
+        res.send("Sesión cerrada correctamente");
     } else {
         res.status(401);
         res.send();
