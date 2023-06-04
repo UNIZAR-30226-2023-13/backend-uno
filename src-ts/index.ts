@@ -115,7 +115,7 @@ io.on("connection", (socket: Socket) => {
     connectionHandler(socket);
 
     // Handler de la desconexion
-    desconnectionHandler(socket);
+    desconnectionHandler(io, socket);
 
     // Handler para una partida
     partidaHandler(io, socket);

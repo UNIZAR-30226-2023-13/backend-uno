@@ -103,7 +103,7 @@ export function partidaHandler(io: SocketIOServer, socket: Socket) {
         }
     });
 
-    socket.on("abandonarPartida", (callback) => {
+    socket.on("abandonarPartida", () => {
         const idSala: string | undefined = salasJuego.get(socket);
         const username: string | undefined = obtenerUsernameDeSocket(socket);
         // Si esta registrado y tiene una salaDeJuego
@@ -113,7 +113,8 @@ export function partidaHandler(io: SocketIOServer, socket: Socket) {
             if (partida) {
                 eliminarJugadorPartida(username);
                 socket.to(idSala).emit("partida:abandono", username);
-                callback("Ok");
+                // Envio la partida actualizada
+                socket.to(idSala).emit("partida", partida);
             }
         }
     });

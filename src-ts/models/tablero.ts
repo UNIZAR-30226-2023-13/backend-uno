@@ -223,6 +223,9 @@ export class Tablero {
             (jugador) => jugador.username !== jugadorAEliminar.username
         );
 
+        if (this.jugadores.length === 1) {
+            this.terminarPartida();
+        }
         return true;
     }
 
@@ -328,10 +331,20 @@ export class Tablero {
         }
 
         if (jugador.mano.length === 0) {
-            this.ganador = jugador;
-            this.finalizado = true;
+            this.terminarPartida();
         }
 
         return true;
+    }
+
+    terminarPartida() {
+        let minimoCartas = Number.MAX_SAFE_INTEGER;
+        this.finalizado = true;
+        for (const jugador of this.jugadores) {
+            if (jugador.mano.length < minimoCartas) {
+                this.ganador = jugador;
+                minimoCartas = jugador.mano.length;
+            }
+        }
     }
 }
