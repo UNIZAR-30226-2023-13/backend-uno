@@ -230,7 +230,9 @@ export class Tablero {
         return this.jugadores.find((jugador) => jugador.username === username);
     }
 
-    robarCarta(jugador: Jugador): void {
+    robarCarta(jugador: Jugador): boolean {
+        if (this.jugadores[this.turno] !== jugador) return false;
+
         const cartaRobada = this.mazoCentral.pop();
         // Si habia cartas en el mazo central
         if (cartaRobada) {
@@ -250,9 +252,14 @@ export class Tablero {
             // Roba la carta que toca del nuevo mazo
             this.robarCarta(jugador);
         }
+        return true;
     }
 
-    jugarCarta(carta: Carta, jugador: Jugador, penultimaCarta = false): void {
+    jugarCarta(
+        carta: Carta,
+        jugador: Jugador,
+        penultimaCarta = false
+    ): boolean {
         const indiceCartaEliminar = jugador.mano.findIndex(
             (c) =>
                 c.accion === carta.accion &&
@@ -260,14 +267,12 @@ export class Tablero {
                 c.colorCambio === carta.colorCambio &&
                 c.numero === carta.numero
         );
-        if (indiceCartaEliminar === -1) {
-            console.log("Indice: " + indiceCartaEliminar);
-            console.log("El jugador no tiene esa carta");
-            console.log("mano jugador:");
-            console.log(jugador.mano);
-            console.log("carta:");
-            console.log(carta);
-            return;
+        // Si no es el turno del jugador o no tiene la carta
+        if (
+            this.jugadores[this.turno] !== jugador ||
+            indiceCartaEliminar === -1
+        ) {
+            return false;
         }
         // Si deberia haber marcado UNO! y no lo hizo
         if (jugador.mano.length === 2 && !penultimaCarta) {
@@ -326,5 +331,7 @@ export class Tablero {
             this.ganador = jugador;
             this.finalizado = true;
         }
+
+        return true;
     }
 }
