@@ -91,21 +91,22 @@ export async function eliminarCuenta(
     return new Promise((resolve, reject) => {
         if (!contrasenaCorrecta) {
             resolve(false);
-        }
-        // Definir query
-        const queryString =
-            "DELETE \
-            FROM usuarios \
-            WHERE username=?";
+        } else {
+            // Definir query
+            const queryString =
+                "DELETE \
+        FROM usuarios \
+        WHERE username=?";
 
-        db.query<RowDataPacket[]>(queryString, [username])
-            .then(async () => {
-                resolve(true);
-            })
-            .catch((err: QueryError) => {
-                console.log(err);
-                resolve(false);
-                reject(err);
-            });
+            db.query<RowDataPacket[]>(queryString, [username])
+                .then(async () => {
+                    resolve(true);
+                })
+                .catch((err: QueryError) => {
+                    console.log(err);
+                    resolve(false);
+                    reject(err);
+                });
+        }
     });
 }
