@@ -253,6 +253,22 @@ export class Tablero {
     }
 
     jugarCarta(carta: Carta, jugador: Jugador, penultimaCarta = false): void {
+        const indiceCartaEliminar = jugador.mano.findIndex(
+            (c) =>
+                c.accion === carta.accion &&
+                c.color === carta.color &&
+                c.colorCambio === carta.colorCambio &&
+                c.numero === carta.numero
+        );
+        if (indiceCartaEliminar === -1) {
+            console.log("Indice: " + indiceCartaEliminar);
+            console.log("El jugador no tiene esa carta");
+            console.log("mano jugador:");
+            console.log(jugador.mano);
+            console.log("carta:");
+            console.log(carta);
+            return;
+        }
         // Si deberia haber marcado UNO! y no lo hizo
         if (jugador.mano.length === 2 && !penultimaCarta) {
             this.robarCarta(jugador);
@@ -277,8 +293,8 @@ export class Tablero {
                         break;
                 }
             }
-            // Eliminar la carta y añadirla al mazoDescartes
-            jugador.mano = jugador.mano.filter((c) => c !== carta);
+            jugador.mano.splice(indiceCartaEliminar, 1);
+            //jugador.mano = jugador.mano.filter((c) => c !== carta);
             this.mazoDescartes.unshift(carta);
             // Pasar el turno
             this.pasarTurno();
@@ -286,7 +302,8 @@ export class Tablero {
         // Si es una carta que se puede jugar aunque no sea del mismo color
         else if (carta.accion === "cambio color") {
             // Eliminar la carta y añadirla al mazoDescartes
-            jugador.mano = jugador.mano.filter((c) => c !== carta);
+            jugador.mano.splice(indiceCartaEliminar, 1);
+            //jugador.mano = jugador.mano.filter((c) => c !== carta);
             carta.color = carta.colorCambio;
             this.mazoDescartes.unshift(carta);
             // Pasar el turno
@@ -297,7 +314,8 @@ export class Tablero {
             this.robarCarta(this.siguienteJugador());
             this.robarCarta(this.siguienteJugador());
             // Eliminar la carta y añadirla al mazoDescartes
-            jugador.mano = jugador.mano.filter((c) => c !== carta);
+            jugador.mano.splice(indiceCartaEliminar, 1);
+            //jugador.mano = jugador.mano.filter((c) => c !== carta);
             carta.color = carta.colorCambio;
             this.mazoDescartes.unshift(carta);
             // Pasar el turno

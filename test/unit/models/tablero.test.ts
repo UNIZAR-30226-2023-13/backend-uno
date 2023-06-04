@@ -199,6 +199,7 @@ test("jugarCartaNormal", () => {
     expect(tableroInicial.mazoDescartes.at(0)).toEqual(cartaMazo);
     tableroInicial.jugarCarta(cartaJugar, jugadorConCarta);
     expect(tableroInicial.mazoDescartes.at(0)).toEqual(cartaJugar);
+    expect(tableroInicial.jugadores[0].mano.length).toEqual(0);
 });
 
 test("jugarRoba2", () => {
