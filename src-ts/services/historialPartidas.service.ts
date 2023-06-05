@@ -75,6 +75,7 @@ export async function obtenerPartidasJugador(
         FROM \
         jugado j INNER JOIN partida_finalizada pf ON j.id_partida  = pf.id \
         WHERE pf.id=? \
+        ORDER BY fecha DESC \
         ";
 
         db.query<RowDataPacket[]>(queryStringIDsPartida, username)

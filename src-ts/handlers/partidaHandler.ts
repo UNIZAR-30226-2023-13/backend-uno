@@ -75,6 +75,7 @@ export function partidaHandler(io: SocketIOServer, socket: Socket) {
                 if (jugador) {
                     const carta: Carta = mensaje;
                     console.log(jugador);
+                    console.log("jugando la carta: ");
                     console.log(carta);
                     const posible: boolean = partida.jugarCarta(
                         carta,
@@ -82,6 +83,7 @@ export function partidaHandler(io: SocketIOServer, socket: Socket) {
                         penultimaCarta
                     );
                     if (posible) io.to(idSala).emit("partida", partida);
+                    else console.log("imposible jugar la carta");
                 }
             }
         }

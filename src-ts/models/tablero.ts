@@ -275,7 +275,6 @@ export class Tablero {
             (c) =>
                 c.accion === carta.accion &&
                 c.color === carta.color &&
-                c.colorCambio === carta.colorCambio &&
                 c.numero === carta.numero
         );
         // Si no es el turno del jugador o no tiene la carta
@@ -295,24 +294,35 @@ export class Tablero {
         const cartaCentral = this.mazoDescartes.at(0);
         if (
             cartaCentral &&
-            (carta.color === cartaCentral.color ||
-                carta.numero === cartaCentral.numero)
+            ((carta.color === cartaCentral.color &&
+                carta.color !== undefined) ||
+                (carta.numero === cartaCentral.numero &&
+                    carta.numero !== undefined) ||
+                (carta.accion === cartaCentral.accion &&
+                    carta.accion !== undefined &&
+                    (carta.accion === "roba 2" ||
+                        carta.accion === "cambio sentido" ||
+                        carta.accion === "prohibido")))
         ) {
             // Si es una carta de accion
             if (carta.accion) {
                 switch (carta.accion) {
                     case "roba 2":
+                        console.log("soy una roba 2");
                         this.robarCarta(this.siguienteJugador());
                         this.robarCarta(this.siguienteJugador());
                         break;
                     case "cambio sentido":
+                        console.log("soy una carta cambio sentido");
                         this.sentidoHorario = !this.sentidoHorario;
                         break;
                     case "prohibido":
+                        console.log("soy una carta prohibido");
                         this.pasarTurno();
                         break;
                 }
             }
+            console.log("si no ha salido nada antes soy normal");
             jugador.mano.splice(indiceCartaEliminar, 1);
             //jugador.mano = jugador.mano.filter((c) => c !== carta);
             this.mazoDescartes.unshift(carta);
@@ -321,9 +331,9 @@ export class Tablero {
         }
         // Si es una carta que se puede jugar aunque no sea del mismo color
         else if (carta.accion === "cambio color") {
+            console.log("soy una carta cambio color");
             // Eliminar la carta y añadirla al mazoDescartes
             jugador.mano.splice(indiceCartaEliminar, 1);
-            //jugador.mano = jugador.mano.filter((c) => c !== carta);
             carta.color = carta.colorCambio;
             this.mazoDescartes.unshift(carta);
             // Pasar el turno
@@ -337,6 +347,7 @@ export class Tablero {
             jugador.mano.splice(indiceCartaEliminar, 1);
             //jugador.mano = jugador.mano.filter((c) => c !== carta);
             carta.color = carta.colorCambio;
+            console.log(carta);
             this.mazoDescartes.unshift(carta);
             // Pasar el turno
             this.pasarTurno();
