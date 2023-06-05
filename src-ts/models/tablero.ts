@@ -3,6 +3,7 @@ import { Jugador } from "./jugador";
 
 import { Color, Accion } from "./carta";
 import { anadirPartida } from "../services/historialPartidas.service";
+import { anadirPuntos } from "../services/cuenta.service";
 
 export class Tablero {
     mazoCentral: Carta[] = [];
@@ -264,6 +265,12 @@ export class Tablero {
         jugador: Jugador,
         penultimaCarta = false
     ): boolean {
+        if (penultimaCarta)
+            console.log(
+                "el jugador " +
+                    jugador.username +
+                    " esta jugando su penultima carta"
+            );
         const indiceCartaEliminar = jugador.mano.findIndex(
             (c) =>
                 c.accion === carta.accion &&
@@ -348,5 +355,9 @@ export class Tablero {
             }
         }
         anadirPartida(this);
+        // Actualizo los puntos de los jugadores
+        if (this.ganador) {
+            anadirPuntos(this.ganador.username, 2.5 * this.jugadores.length);
+        }
     }
 }

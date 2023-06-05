@@ -61,7 +61,7 @@ export function partidaHandler(io: SocketIOServer, socket: Socket) {
         }
     });
 
-    socket.on("jugarCarta", (mensaje) => {
+    socket.on("jugarCarta", (mensaje, penultimaCarta = false) => {
         const idSala: string | undefined = salasJuego.get(socket);
         const username: string | undefined = obtenerUsernameDeSocket(socket);
         // Si esta registrado y tiene una salaDeJuego
@@ -76,7 +76,11 @@ export function partidaHandler(io: SocketIOServer, socket: Socket) {
                     const carta: Carta = mensaje;
                     console.log(jugador);
                     console.log(carta);
-                    const posible: boolean = partida.jugarCarta(carta, jugador);
+                    const posible: boolean = partida.jugarCarta(
+                        carta,
+                        jugador,
+                        penultimaCarta
+                    );
                     if (posible) io.to(idSala).emit("partida", partida);
                 }
             }

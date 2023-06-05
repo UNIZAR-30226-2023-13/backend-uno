@@ -110,3 +110,27 @@ export async function eliminarCuenta(
         }
     });
 }
+
+export async function anadirPuntos(
+    username: string,
+    puntos: number
+): Promise<void> {
+    const db: Connection = await obtenerDb();
+    return new Promise((resolve, reject) => {
+        // Definir query
+        const queryString =
+            "UPDATE usuarios \
+            SET puntos=puntos + ?\
+            WHERE username=?";
+
+        db.query<RowDataPacket[]>(queryString, [puntos, username])
+            .then(async () => {
+                resolve();
+            })
+            .catch((err: QueryError) => {
+                console.log(err);
+                resolve();
+                reject(err);
+            });
+    });
+}
