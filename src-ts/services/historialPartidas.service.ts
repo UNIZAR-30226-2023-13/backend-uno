@@ -29,9 +29,7 @@ export async function anadirPartida(partida: Tablero): Promise<void> {
                 db.query<RowDataPacket[]>(queryStringGetIDPartida, [])
                     .then(async ([rows]) => {
                         idPartida = rows[0].id;
-                        console.log(idPartida);
                         for (const jugador of partida.jugadores) {
-                            console.log(idPartida);
                             // Añadimos los jugadores de la partida
                             db.query<RowDataPacket[]>(queryStringJugadores, [
                                 jugador.username,

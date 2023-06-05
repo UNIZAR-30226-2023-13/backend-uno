@@ -2,7 +2,7 @@ import { Connection } from "mysql2/promise";
 
 import mysql = require("mysql2/promise");
 import dbConfig = require("../configs/db.config");
-import { ConnectionOptions } from "mysql2";
+import { ConnectionOptions } from "mysql2/promise";
 
 let db: Connection | null = null;
 

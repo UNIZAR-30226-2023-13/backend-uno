@@ -2,6 +2,7 @@ import { Carta } from "./carta";
 import { Jugador } from "./jugador";
 
 import { Color, Accion } from "./carta";
+import { anadirPartida } from "../services/historialPartidas.service";
 
 export class Tablero {
     mazoCentral: Carta[] = [];
@@ -346,5 +347,6 @@ export class Tablero {
                 minimoCartas = jugador.mano.length;
             }
         }
+        anadirPartida(this);
     }
 }

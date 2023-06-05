@@ -1,5 +1,6 @@
 import express, { Express, Request, RequestHandler, Response } from "express";
 import dotenv from "dotenv";
+dotenv.config();
 import bodyParser from "body-parser";
 import cookieParser from "cookie-parser";
 import cookieSession from "cookie-session";
@@ -7,8 +8,6 @@ import { Socket, Server as SocketIOServer } from "socket.io";
 import http = require("http");
 import { Tablero } from "./models/tablero";
 import { Jugador } from "./models/jugador";
-
-dotenv.config();
 
 import partidasRouter = require("./routes/partidas.route");
 import loginRoute = require("./routes/login.route");
