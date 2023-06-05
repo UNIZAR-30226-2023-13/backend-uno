@@ -119,6 +119,8 @@ export function partidaHandler(io: SocketIOServer, socket: Socket) {
                 socket.to(idSala).emit("partida:abandono", username);
                 // Envio la partida actualizada
                 socket.to(idSala).emit("partida", partida);
+                // Abandono la sala
+                socket.leave(idSala);
             }
         }
     });

@@ -111,7 +111,7 @@ export class Tablero {
             }
         } else {
             if (this.turno === 0) {
-                indJugador = this.jugadores.length;
+                indJugador = this.jugadores.length - 1;
             } else {
                 indJugador = this.turno - 1;
             }
@@ -173,7 +173,7 @@ export class Tablero {
         if (this.sentidoHorario) {
             this.turno++;
             if (this.turno >= this.jugadores.length) {
-                this.turno--;
+                this.turno = 0;
             }
         } else {
             this.turno--;
@@ -293,8 +293,12 @@ export class Tablero {
         // Comprueba que es una carta jugable
         // Si es del mismo color
         const cartaCentral = this.mazoDescartes.at(0);
-        if (cartaCentral && carta.color === cartaCentral.color) {
-            // Si no es una carta de accion
+        if (
+            cartaCentral &&
+            (carta.color === cartaCentral.color ||
+                carta.numero === cartaCentral.numero)
+        ) {
+            // Si es una carta de accion
             if (carta.accion) {
                 switch (carta.accion) {
                     case "roba 2":
