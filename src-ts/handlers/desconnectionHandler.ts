@@ -15,7 +15,7 @@ export function desconnectionHandler(io: SocketIOServer, socket: Socket) {
         // Eliminarlo de la partida en la que este
         const username = obtenerUsernameDeSocket(socket);
         console.log("Desconexion: " + socket.id + " -> " + username);
-        if (username) {
+        if (username && username !== undefined) {
             eliminarJugadorPartida(username);
             const partida: Tablero | null = obtenerPartidaJugador(username);
             // Eliminarlo de la sala
