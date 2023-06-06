@@ -104,7 +104,7 @@ export class Tablero {
     siguienteJugador(): Jugador {
         let indJugador: number;
         if (this.sentidoHorario) {
-            if (this.turno >= this.jugadores.length) {
+            if (this.turno >= this.jugadores.length - 1) {
                 indJugador = 0;
             } else {
                 indJugador = this.turno + 1;
@@ -225,7 +225,7 @@ export class Tablero {
             (jugador) => jugador.username !== jugadorAEliminar.username
         );
 
-        if (this.jugadores.length === 1) {
+        if (this.jugadores.length === 1 && !this.finalizado) {
             this.terminarPartida();
         }
         return true;
@@ -235,8 +235,9 @@ export class Tablero {
         return this.jugadores.find((jugador) => jugador.username === username);
     }
 
-    robarCarta(jugador: Jugador): boolean {
-        if (this.jugadores[this.turno] !== jugador) return false;
+    robarCarta(jugador: Jugador, mandandoRobar = false): boolean {
+        if (this.jugadores[this.turno] !== jugador && !mandandoRobar)
+            return false;
 
         const cartaRobada = this.mazoCentral.pop();
         // Si habia cartas en el mazo central
@@ -309,8 +310,8 @@ export class Tablero {
                 switch (carta.accion) {
                     case "roba 2":
                         console.log("soy una roba 2");
-                        this.robarCarta(this.siguienteJugador());
-                        this.robarCarta(this.siguienteJugador());
+                        this.robarCarta(this.siguienteJugador(), true);
+                        this.robarCarta(this.siguienteJugador(), true);
                         break;
                     case "cambio sentido":
                         console.log("soy una carta cambio sentido");
@@ -339,10 +340,10 @@ export class Tablero {
             // Pasar el turno
             this.pasarTurno();
         } else if (carta.accion === "roba 4") {
-            this.robarCarta(this.siguienteJugador());
-            this.robarCarta(this.siguienteJugador());
-            this.robarCarta(this.siguienteJugador());
-            this.robarCarta(this.siguienteJugador());
+            this.robarCarta(this.siguienteJugador(), true);
+            this.robarCarta(this.siguienteJugador(), true);
+            this.robarCarta(this.siguienteJugador(), true);
+            this.robarCarta(this.siguienteJugador(), true);
             // Eliminar la carta y añadirla al mazoDescartes
             jugador.mano.splice(indiceCartaEliminar, 1);
             //jugador.mano = jugador.mano.filter((c) => c !== carta);
