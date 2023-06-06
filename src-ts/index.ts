@@ -50,6 +50,8 @@ app.use(
         maxAge: 1000 * 60 * 60 * 24,
         keys: ["mykey"],
         httpOnly: false,
+        sameSite: "none",
+        secure: true,
     })
 );
 
