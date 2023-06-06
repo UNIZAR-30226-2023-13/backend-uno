@@ -23,6 +23,10 @@ export function obtenerSalaJuego(socket: Socket) {
     return salasJuego.get(socket);
 }
 
+export function eliminarJugadorDeSala(socket: Socket) {
+    salasJuego.delete(socket);
+}
+
 export function partidaHandler(io: SocketIOServer, socket: Socket) {
     socket.on("partida", () => {
         console.log("partida");
@@ -120,11 +124,13 @@ export function partidaHandler(io: SocketIOServer, socket: Socket) {
                 if (!partida.finalizado) {
                     eliminarJugadorPartida(username);
                     socket.to(idSala).emit("partida:abandono", username);
+                    console.log("partida abandonada por: " + username);
                     // Envio la partida actualizada
                     socket.to(idSala).emit("partida", partida);
                 }
                 // Abandono la sala
                 socket.leave(idSala);
+                salasJuego.delete(socket);
             }
         }
     });

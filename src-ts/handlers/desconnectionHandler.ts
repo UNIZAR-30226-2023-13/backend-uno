@@ -7,7 +7,7 @@ import {
     eliminarJugadorPartida,
     obtenerPartidaJugador,
 } from "../services/partidas.service";
-import { obtenerSalaJuego } from "./partidaHandler";
+import { eliminarJugadorDeSala, obtenerSalaJuego } from "./partidaHandler";
 import { Tablero } from "../models/tablero";
 
 export function desconnectionHandler(io: SocketIOServer, socket: Socket) {
@@ -20,8 +20,10 @@ export function desconnectionHandler(io: SocketIOServer, socket: Socket) {
             const partida: Tablero | null = obtenerPartidaJugador(username);
             // Eliminarlo de la sala
             const idSala: string | undefined = obtenerSalaJuego(socket);
+            console.log("abandona la partida" + username);
             if (idSala) {
                 socket.to(idSala).emit("partida:abandono", username);
+                eliminarJugadorDeSala(socket);
                 if (partida) {
                     io.to(idSala).emit("partida", partida);
                 }
@@ -29,6 +31,7 @@ export function desconnectionHandler(io: SocketIOServer, socket: Socket) {
         }
 
         // Marcar como desconectado
+
         desconectarJugador(socket);
     });
 }
