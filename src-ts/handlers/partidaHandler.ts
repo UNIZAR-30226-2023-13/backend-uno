@@ -117,10 +117,12 @@ export function partidaHandler(io: SocketIOServer, socket: Socket) {
             const partida: Tablero | null = obtenerPartidaJugador(username);
             // Si existe la partida
             if (partida && !partida.finalizado) {
-                eliminarJugadorPartida(username);
-                socket.to(idSala).emit("partida:abandono", username);
-                // Envio la partida actualizada
-                socket.to(idSala).emit("partida", partida);
+                if (!partida.finalizado) {
+                    eliminarJugadorPartida(username);
+                    socket.to(idSala).emit("partida:abandono", username);
+                    // Envio la partida actualizada
+                    socket.to(idSala).emit("partida", partida);
+                }
                 // Abandono la sala
                 socket.leave(idSala);
             }

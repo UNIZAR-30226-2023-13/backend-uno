@@ -128,6 +128,23 @@ export class Tablero {
             // Escojo un elemento aleatoriamente.
             randomIndex = Math.floor(Math.random() * currentIndex);
             currentIndex--;
+            // Comprobar si es un roba 4 o un cambio de color
+            if (
+                this.mazoCentral[currentIndex].accion == "roba 4" ||
+                this.mazoCentral[currentIndex].accion == "cambio color"
+            ) {
+                this.mazoCentral[currentIndex].color = undefined;
+                this.mazoCentral[currentIndex].colorCambio = undefined;
+            }
+
+            // Comprobar si es un roba 4 o un cambio de color
+            if (
+                this.mazoCentral[randomIndex].accion == "roba 4" ||
+                this.mazoCentral[randomIndex].accion == "cambio color"
+            ) {
+                this.mazoCentral[randomIndex].color = undefined;
+                this.mazoCentral[randomIndex].colorCambio = undefined;
+            }
 
             // And swap it with the current element.
             [this.mazoCentral[currentIndex], this.mazoCentral[randomIndex]] = [
@@ -140,9 +157,6 @@ export class Tablero {
         // Si es el barajeo inicial
         if (primeraVez) {
             let carta = this.mazoCentral.pop();
-            carta = {
-                accion: "cambio color",
-            };
             // Mientras sea una carta de accion
             while (carta && carta.accion) {
                 // La añadimos al fondo
@@ -283,6 +297,7 @@ export class Tablero {
             this.jugadores[this.turno] !== jugador ||
             indiceCartaEliminar === -1
         ) {
+            console.log("el jugador no tiene esa carta " + indiceCartaEliminar);
             return false;
         }
         // Si deberia haber marcado UNO! y no lo hizo
