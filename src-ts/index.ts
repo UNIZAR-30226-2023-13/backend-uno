@@ -22,7 +22,7 @@ const app: Express = express();
 const server = http.createServer(app);
 const io = new SocketIOServer(server, {
     cors: {
-        origin: "http://localhost:3000",
+        origin: process.env.FRONTEND_HOST,
     },
 });
 
@@ -39,7 +39,7 @@ declare module "express-session" {
 app.use(
     cors({
         credentials: true,
-        origin: "http://localhost:3000",
+        origin: process.env.FRONTEND_HOST,
     })
 );
 

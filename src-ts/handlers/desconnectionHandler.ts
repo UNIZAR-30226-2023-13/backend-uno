@@ -21,9 +21,9 @@ export function desconnectionHandler(io: SocketIOServer, socket: Socket) {
             // Eliminarlo de la sala
             const idSala: string | undefined = obtenerSalaJuego(socket);
             console.log("abandona la partida" + username);
+            eliminarJugadorDeSala(socket);
             if (idSala) {
                 socket.to(idSala).emit("partida:abandono", username);
-                eliminarJugadorDeSala(socket);
                 if (partida) {
                     io.to(idSala).emit("partida", partida);
                 }
@@ -31,7 +31,6 @@ export function desconnectionHandler(io: SocketIOServer, socket: Socket) {
         }
 
         // Marcar como desconectado
-
         desconectarJugador(socket);
     });
 }
