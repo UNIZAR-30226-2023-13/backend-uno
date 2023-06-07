@@ -43,17 +43,27 @@ app.use(
     })
 );
 
+console.log(process.env.ENVIROMENT);
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(
-    cookieSession({
-        maxAge: 1000 * 60 * 60 * 24,
-        keys: ["mykey"],
-        httpOnly: false,
-        sameSite: "none",
-        secure: true,
-    })
-);
+if (process.env.ENVIROMENT === "DEV") {
+    app.use(
+        cookieSession({
+            maxAge: 1000 * 60 * 60 * 24,
+            keys: ["mykey"],
+        })
+    );
+} else {
+    app.use(
+        cookieSession({
+            maxAge: 1000 * 60 * 60 * 24,
+            keys: ["mykey"],
+            httpOnly: false,
+            secure: true,
+            sameSite: "none",
+        })
+    );
+}
 
 app.use("/login", loginRoute as RequestHandler);
 
