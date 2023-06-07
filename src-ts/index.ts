@@ -6,7 +6,6 @@ import cookieParser from "cookie-parser";
 import cookieSession from "cookie-session";
 import { Socket, Server as SocketIOServer } from "socket.io";
 import http = require("http");
-import https = require("https");
 import { Tablero } from "./models/tablero";
 import { Jugador } from "./models/jugador";
 
@@ -20,13 +19,7 @@ import auth = require("./middlewares/auth");
 import cors from "cors";
 
 const app: Express = express();
-let server: http.Server | https.Server;
-if (process.env.ENVIROMENT === "DEV") {
-    server = http.createServer(app);
-} else {
-    server = https.createServer(app);
-}
-
+const server = http.createServer(app);
 const io = new SocketIOServer(server, {
     cors: {
         origin: process.env.FRONTEND_HOST,
