@@ -4,7 +4,7 @@ import {
     cambiarEmailPassword,
     eliminarCuenta,
 } from "../services/cuenta.service";
-import { obtenerCorreoPuntos } from "../services/login.service";
+import { obtenerDatosBasicos } from "../services/login.service";
 
 const cuentaRouter: Router = express.Router();
 
@@ -93,12 +93,14 @@ cuentaRouter.get("/quien-soy", async (req: Request, res: Response) => {
     let username = "";
     if (req.session.username) {
         username = req.session.username;
-        obtenerCorreoPuntos(username)
-            .then(({ persona, correo }) => {
+        obtenerDatosBasicos(username)
+            .then(({ persona, correo, tablero, cartas }) => {
                 res.status(200);
                 res.json({
                     ...persona,
                     correo: correo,
+                    tablero: tablero,
+                    cartas: cartas,
                 });
             })
             .catch(() => {

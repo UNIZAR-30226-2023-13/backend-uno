@@ -37,15 +37,20 @@ export async function comprobarContrasena(
     });
 }
 
-export async function obtenerCorreoPuntos(
-    username: string
-): Promise<{ persona: Persona; correo: string }> {
+export async function obtenerDatosBasicos(username: string): Promise<{
+    persona: Persona;
+    correo: string;
+    tablero: string;
+    cartas: string;
+}> {
     const db: Connection = await obtenerDb();
     return new Promise((resolve, reject) => {
         // Definir query
         const queryString =
             "SELECT \
-                u.email, u.puntos \
+                u.email, u.puntos, \
+                u.tablero_en_uso AS tablero,\
+                u.aspecto_en_uso AS cartas \
             FROM usuarios AS u \
             WHERE u.username = ?";
 
@@ -54,12 +59,16 @@ export async function obtenerCorreoPuntos(
                 if (rows.length > 0) {
                     const email: string = rows[0].email;
                     const puntos: number = rows[0].puntos;
+                    const tablero: string = rows[0].tablero;
+                    const cartas: string = rows[0].cartas;
                     resolve({
                         persona: {
                             username: username,
                             puntos: puntos,
                         },
                         correo: email,
+                        tablero: tablero,
+                        cartas: cartas,
                     });
                 } else {
                     reject();

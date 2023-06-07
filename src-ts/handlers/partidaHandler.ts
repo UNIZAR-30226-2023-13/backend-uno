@@ -3,7 +3,7 @@ import {
     obtenerSocketDeUsername,
     obtenerUsernameDeSocket,
 } from "../services/usuariosConectados.service";
-import { obtenerCorreoPuntos } from "../services/login.service";
+import { obtenerDatosBasicos } from "../services/login.service";
 import { Persona } from "../models/persona";
 import {
     anadirJugadorPartida,
@@ -35,7 +35,7 @@ export function partidaHandler(io: SocketIOServer, socket: Socket) {
     socket.on("buscarPartida", () => {
         const username: string | undefined = obtenerUsernameDeSocket(socket);
         if (username) {
-            obtenerCorreoPuntos(username).then(({ persona }) => {
+            obtenerDatosBasicos(username).then(({ persona }) => {
                 const usuario: Persona = persona;
                 console.log("Busca partida: " + usuario.username);
                 const comienza: boolean = anadirJugadorPartida(usuario);
