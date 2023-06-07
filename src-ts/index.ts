@@ -39,7 +39,7 @@ declare module "express-session" {
 app.use(
     cors({
         credentials: true,
-        origin: process.env.FRONTEND_HOST,
+        origin: true,
     })
 );
 
