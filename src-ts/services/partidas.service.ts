@@ -51,8 +51,10 @@ export function eliminarJugadorPartida(username: string) {
         const indexJugador: number = partida.jugadores.findIndex(
             (jugador: Jugador) => jugador.username === username
         );
-        const jugador: Jugador = partida.jugadores[indexJugador];
-        partida.eliminarJugador(jugador);
+        if (indexJugador !== -1) {
+            const jugador: Jugador = partida.jugadores[indexJugador];
+            partida.eliminarJugador(jugador);
+        }
     }
     // Si no hay mas jugadores en la partida la eliminamos
     if (partida?.numeroJugadores() === 0) {
