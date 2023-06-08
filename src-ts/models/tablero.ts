@@ -14,6 +14,7 @@ export class Tablero {
     empezada = false;
     fecha: Date = new Date();
 
+    puedeRobar = true;
     sentidoHorario = true;
     turno = 0;
 
@@ -196,6 +197,16 @@ export class Tablero {
         }
     }
 
+    saltarTurno(jugador: Jugador): boolean {
+        if (this.jugadores[this.turno] !== jugador && !this.puedeRobar) {
+            return false;
+        } else {
+            this.pasarTurno();
+            this.puedeRobar = true;
+            return true;
+        }
+    }
+
     anadirJugador(nuevoJugador: Jugador): boolean {
         if (this.jugadores.length < 4) {
             this.jugadores.push(nuevoJugador);
@@ -251,6 +262,11 @@ export class Tablero {
     robarCarta(jugador: Jugador, mandandoRobar = false): boolean {
         if (this.jugadores[this.turno] !== jugador && !mandandoRobar)
             return false;
+
+        if (!this.puedeRobar) return false;
+
+        // Si esta robando para si mismo ya no podra más
+        if (!mandandoRobar) this.puedeRobar = false;
 
         const cartaRobada = this.mazoCentral.pop();
         // Si habia cartas en el mazo central
@@ -330,6 +346,7 @@ export class Tablero {
             jugador.mano.splice(indiceCartaEliminar, 1);
             this.mazoDescartes.unshift(carta);
             // Pasar el turno
+            this.puedeRobar = true;
             this.pasarTurno();
         }
         // Si es una carta que se puede jugar aunque no sea del mismo color
@@ -350,6 +367,7 @@ export class Tablero {
             carta.color = carta.colorCambio;
             this.mazoDescartes.unshift(carta);
             // Pasar el turno
+            this.puedeRobar = true;
             this.pasarTurno();
         }
 

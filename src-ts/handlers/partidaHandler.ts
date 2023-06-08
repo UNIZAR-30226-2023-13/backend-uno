@@ -85,6 +85,25 @@ export function partidaHandler(io: SocketIOServer, socket: Socket) {
         }
     });
 
+    socket.on("pasarTurno", () => {
+        const idSala: string | undefined = salasJuego.get(socket);
+        const username: string | undefined = obtenerUsernameDeSocket(socket);
+        // Si esta registrado y tiene una salaDeJuego
+        if (username && idSala) {
+            const partida: Tablero | null = obtenerPartidaJugador(username);
+            // Si existe la partida
+            if (partida) {
+                const jugador: Jugador | undefined =
+                    partida.obtenerJugador(username);
+                // Si pertenece a la partida
+                if (jugador) {
+                    const posible: boolean = partida.saltarTurno(jugador);
+                    if (posible) io.to(idSala).emit("partida", partida);
+                }
+            }
+        }
+    });
+
     socket.on("robarCarta", () => {
         const idSala: string | undefined = salasJuego.get(socket);
         const username: string | undefined = obtenerUsernameDeSocket(socket);
