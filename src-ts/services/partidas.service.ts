@@ -47,7 +47,7 @@ export function anadirJugadorPartida(persona: Persona): boolean {
 
 export function eliminarJugadorPartida(username: string) {
     const partida: Tablero | undefined = partidaPorJugador.get(username);
-    if (partida) {
+    if (partida && username && username !== undefined) {
         const indexJugador: number = partida.jugadores.findIndex(
             (jugador: Jugador) => jugador.username === username
         );
