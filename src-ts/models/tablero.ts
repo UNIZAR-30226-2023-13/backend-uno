@@ -369,7 +369,7 @@ export class Tablero {
         }
 
         // Si deberia haber marcado UNO! y no lo hizo
-        if (jugador.mano.length === 2 && !penultimaCarta) {
+        if (jugador.mano.length === 1 && !penultimaCarta) {
             this.robarCarta(jugador, true);
             this.robarCarta(jugador, true);
         }
