@@ -28,10 +28,6 @@ export function eliminarJugadorDeSala(socket: Socket) {
 }
 
 export function partidaHandler(io: SocketIOServer, socket: Socket) {
-    socket.on("partida", () => {
-        console.log("partida");
-    });
-
     socket.on("buscarPartida", () => {
         const username: string | undefined = obtenerUsernameDeSocket(socket);
         if (username) {
@@ -78,16 +74,12 @@ export function partidaHandler(io: SocketIOServer, socket: Socket) {
                 // Si pertenece a la partida
                 if (jugador) {
                     const carta: Carta = mensaje;
-                    console.log(jugador);
-                    console.log("jugando la carta: ");
-                    console.log(carta);
                     const posible: boolean = partida.jugarCarta(
                         carta,
                         jugador,
                         penultimaCarta
                     );
                     if (posible) io.to(idSala).emit("partida", partida);
-                    else console.log("imposible jugar la carta");
                 }
             }
         }
@@ -105,7 +97,6 @@ export function partidaHandler(io: SocketIOServer, socket: Socket) {
                     partida.obtenerJugador(username);
                 // Si pertenece a la partida
                 if (jugador) {
-                    console.log(jugador);
                     const posible: boolean = partida.robarCarta(jugador);
                     if (posible) io.to(idSala).emit("partida", partida);
                 }

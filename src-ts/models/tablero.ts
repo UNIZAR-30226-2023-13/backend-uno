@@ -94,7 +94,6 @@ export class Tablero {
         this.mezclarBarajaCentral(true);
         this.repartirCartasIniciales();
         this.fecha = new Date();
-        console.log(JSON.stringify(this, null, 2));
     }
 
     numeroJugadores(): number {
@@ -280,12 +279,6 @@ export class Tablero {
         jugador: Jugador,
         penultimaCarta = false
     ): boolean {
-        if (penultimaCarta)
-            console.log(
-                "el jugador " +
-                    jugador.username +
-                    " esta jugando su penultima carta"
-            );
         const indiceCartaEliminar = jugador.mano.findIndex(
             (c) =>
                 c.accion === carta.accion &&
@@ -297,7 +290,6 @@ export class Tablero {
             this.jugadores[this.turno] !== jugador ||
             indiceCartaEliminar === -1
         ) {
-            console.log("el jugador no tiene esa carta " + indiceCartaEliminar);
             return false;
         }
         // Si deberia haber marcado UNO! y no lo hizo
@@ -324,30 +316,24 @@ export class Tablero {
             if (carta.accion) {
                 switch (carta.accion) {
                     case "roba 2":
-                        console.log("soy una roba 2");
                         this.robarCarta(this.siguienteJugador(), true);
                         this.robarCarta(this.siguienteJugador(), true);
                         break;
                     case "cambio sentido":
-                        console.log("soy una carta cambio sentido");
                         this.sentidoHorario = !this.sentidoHorario;
                         break;
                     case "prohibido":
-                        console.log("soy una carta prohibido");
                         this.pasarTurno();
                         break;
                 }
             }
-            console.log("si no ha salido nada antes soy normal");
             jugador.mano.splice(indiceCartaEliminar, 1);
-            //jugador.mano = jugador.mano.filter((c) => c !== carta);
             this.mazoDescartes.unshift(carta);
             // Pasar el turno
             this.pasarTurno();
         }
         // Si es una carta que se puede jugar aunque no sea del mismo color
         else if (carta.accion === "cambio color") {
-            console.log("soy una carta cambio color");
             // Eliminar la carta y añadirla al mazoDescartes
             jugador.mano.splice(indiceCartaEliminar, 1);
             carta.color = carta.colorCambio;
@@ -361,9 +347,7 @@ export class Tablero {
             this.robarCarta(this.siguienteJugador(), true);
             // Eliminar la carta y añadirla al mazoDescartes
             jugador.mano.splice(indiceCartaEliminar, 1);
-            //jugador.mano = jugador.mano.filter((c) => c !== carta);
             carta.color = carta.colorCambio;
-            console.log(carta);
             this.mazoDescartes.unshift(carta);
             // Pasar el turno
             this.pasarTurno();
@@ -377,18 +361,23 @@ export class Tablero {
     }
 
     terminarPartida() {
-        let minimoCartas = Number.MAX_SAFE_INTEGER;
-        this.finalizado = true;
-        for (const jugador of this.jugadores) {
-            if (jugador.mano.length < minimoCartas) {
-                this.ganador = jugador;
-                minimoCartas = jugador.mano.length;
+        if (this.empezada) {
+            let minimoCartas = Number.MAX_SAFE_INTEGER;
+            this.finalizado = true;
+            for (const jugador of this.jugadores) {
+                if (jugador.mano.length < minimoCartas) {
+                    this.ganador = jugador;
+                    minimoCartas = jugador.mano.length;
+                }
             }
-        }
-        anadirPartida(this);
-        // Actualizo los puntos de los jugadores
-        if (this.ganador) {
-            anadirPuntos(this.ganador.username, 2.5 * this.jugadores.length);
+            anadirPartida(this);
+            // Actualizo los puntos de los jugadores
+            if (this.ganador) {
+                anadirPuntos(
+                    this.ganador.username,
+                    2.5 * this.jugadores.length
+                );
+            }
         }
     }
 }

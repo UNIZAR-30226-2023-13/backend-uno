@@ -10,7 +10,6 @@ partidasRouter.get("/", async (req: Request, res: Response) => {
         obtenerPartidasJugador(username)
             .then((partidas) => {
                 res.status(200);
-                console.log(partidas);
                 partidas.reverse();
                 res.json({
                     partidas,

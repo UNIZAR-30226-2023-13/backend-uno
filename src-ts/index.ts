@@ -1,7 +1,6 @@
 import express, { Express, Request, RequestHandler, Response } from "express";
 import dotenv from "dotenv";
 dotenv.config();
-import { mensajeHandler } from "./handlers/message.socket";
 import { connectionHandler } from "./handlers/connectionHandler";
 import { desconnectionHandler } from "./handlers/desconnectionHandler";
 import { partidaHandler } from "./handlers/partidaHandler";
@@ -46,7 +45,6 @@ app.use(
     })
 );
 
-console.log(process.env.ENVIROMENT);
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: true }));
 if (process.env.ENVIROMENT === "DEV") {
@@ -97,6 +95,4 @@ io.on("connection", (socket: Socket) => {
 
     // Handler para una partida
     partidaHandler(io, socket);
-
-    mensajeHandler(io, socket);
 });

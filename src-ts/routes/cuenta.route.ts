@@ -14,9 +14,6 @@ cuentaRouter.post(
         const email: string = req.body.email;
         const cambioPassword: string = req.body.cambioPassword;
         if (req.session.username && email && cambioPassword === "true") {
-            console.log(
-                "Cambio de email y contraseña de: " + req.session.username
-            );
             const username = req.session.username;
             const password: string = req.body.password;
             // Si quiero cambiar email y password
