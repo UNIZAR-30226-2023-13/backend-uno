@@ -308,11 +308,6 @@ export class Tablero {
         ) {
             return false;
         }
-        // Si deberia haber marcado UNO! y no lo hizo
-        if (jugador.mano.length === 2 && !penultimaCarta) {
-            this.robarCarta(jugador);
-            this.robarCarta(jugador);
-        }
         // Comprueba que es una carta jugable
         // Si es del mismo color
         const cartaCentral = this.mazoDescartes.at(0);
@@ -369,6 +364,14 @@ export class Tablero {
             // Pasar el turno
             this.puedeRobar = true;
             this.pasarTurno();
+        } else {
+            return false;
+        }
+
+        // Si deberia haber marcado UNO! y no lo hizo
+        if (jugador.mano.length === 2 && !penultimaCarta) {
+            this.robarCarta(jugador, true);
+            this.robarCarta(jugador, true);
         }
 
         if (jugador.mano.length === 0) {
