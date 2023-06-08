@@ -260,10 +260,12 @@ export class Tablero {
     }
 
     robarCarta(jugador: Jugador, mandandoRobar = false): boolean {
+        // Si no es tu turno y estas robando para ti mismo
         if (this.jugadores[this.turno] !== jugador && !mandandoRobar)
             return false;
 
-        if (!this.puedeRobar) return false;
+        // Si estas robando para ti mismo y no puedes robar
+        if (!mandandoRobar && !this.puedeRobar) return false;
 
         // Si esta robando para si mismo ya no podra más
         if (!mandandoRobar) this.puedeRobar = false;
