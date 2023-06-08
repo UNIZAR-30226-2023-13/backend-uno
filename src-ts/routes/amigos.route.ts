@@ -110,7 +110,7 @@ amigosRouter.post(
             res.status(200);
             res.send("Invitacion eliminada");
         } else {
-            res.status(200);
+            res.status(400);
             res.send("No se ha podido eliminar la invitacion");
         }
     }
