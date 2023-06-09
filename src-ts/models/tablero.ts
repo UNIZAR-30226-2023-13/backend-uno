@@ -353,6 +353,7 @@ export class Tablero {
             carta.color = carta.colorCambio;
             this.mazoDescartes.unshift(carta);
             // Pasar el turno
+            this.puedeRobar = true;
             this.pasarTurno();
         } else if (carta.accion === "roba 4") {
             this.robarCarta(this.siguienteJugador(), true);
